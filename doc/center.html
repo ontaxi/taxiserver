@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Center&ndash;taxi servers interface</title>
+<link rel="stylesheet" href="doc.css">
+</head>
+<body>
+
+<script>document.write(document.lastModified);</script>
+
+<h1>Center&ndash;taxi servers interface</h1>
+
+<p>The center server connects to the taxi server. The connection stays open all the time.</p>
+<p>The center server is also called "master server".</p>
+
+<article>
+	<h1>Authorisation</h1>
+
+	<p>The first message has to be the <i>auth-center</i> message. If the authorisation is successful, the taxi server will respond with the <i>auth-ok</i> message; otherwise it will respond with the <i>auth-failed</i> message.</p>
+
+	<article class="command" id="auth-center">
+		<h1>auth-center</h1>
+
+		<p><code>data: {login, password}</code></p>
+
+		<p>The <i>auth-center</i> message requests the taxi server to authorise the master server using given login and password.</p>
+	</article>
+
+	<article class="command" id="auth-ok">
+		<h1>auth-ok</h1>
+
+		<p><code>data: {<br>
+			<span class="tab">
+			options: [&lt;option&gt;, ...]</span><br>
+		}</code></p>
+
+		<p>The <i>auth-ok</i> message tells the master server that it has been authorised. The <i>options</i> data field contains a list of car search options, as strings, recognised by the taxi server.</p>
+	</article>
+
+	<article class="command">
+		<h1>auth-failed</h1>
+
+		<p>The <i>auth-failed</i> message tells the master server that its authorisation message contained wrong login and password.</p>
+	</article>
+</article>
+
+<article>
+	<h1>Tracking connection</h1>
+
+	<article class="command">
+		<h1>ping</h1>
+
+		<table class="dl">
+			<tr>
+				<td>t</td>
+				<td>Time according to the master server.</td>
+			</tr>
+			<tr>
+				<td>prev_rtt</td>
+				<td>Previous value of RTT in milliseconds measured by the master server.</td>
+			</tr>
+		</table>
+	</article>
+
+	<article class="command">
+		<h1>pong</h1>
+		<table class="dl">
+			<tr>
+				<td>t</td>
+				<td>The value of time given in the preceding "ping" message.</td>
+			</tr>
+		</table>
+	</article>
+</article>
+
+<article>
+	<h1>Getting car offers</h1>
+
+	<p>The master server sends a <i>get-offers</i> message to the taxi server.
+	The message has enough information to let the taxi server filter its cars.
+	The taxi server returns a list of offers as a <i>car-offers</i> message.</p>
+
+	<p>The master server can then pick an offer and try to take it by sending a <i>take-offer</i> message.
+	This message will have additional information about the order.
+	The taxi server will save the order and dispatch it to the driver.</p>
+
+	<p>If the driver accepts the order, the taxi server will send an <i>offer-succeeded</i> message to the master server with the car description.
+	If the driver declines the order or the order can’t be dispatched to the driver, the taxi server will send an <i>offer-failed</i> message to the master server.</p>
+
+	<article class="command" id="get-car-offers">
+		<h1>get-car-offers</h1>
+
+		<p><code>data: {<br>
+			<span class="tab">
+			request_id,<br>
+			latitude,<br>
+			longitude,<br>
+			opt_vip,<br>
+			car_type</span><br>
+		}</code></p>
+
+		<p>The <i>get-car-offers</i> message requests the taxi server to create and send to the master server a list of car offers for the order having properties described in the message.</p>
+
+		<table class="dl">
+			<tr>
+				<td>request_id</td>
+				<td>Identifier of this get-offers request.</td>
+			</tr>
+			<tr>
+				<td>latitude, longitude</td>
+				<td>Coordinates of the order</td>
+			</tr>
+			<tr>
+				<td>opt_vip</td>
+				<td>1 if an expensive car is to be requested, -1 if expensive cars must be excluded, 0 or null if it doesn’t matter.</td>
+			</tr>
+			<tr>
+				<td>car_type</td>
+				<td>"normal", "minivan" or "estate". Empty string or null if any car type is accepted.</td>
+			</tr>
+		</table>
+	</article>
+
+	<article class="command">
+		<h1>car-offers</h1>
+		<p>The taxi server returns offers.</p>
+
+		<table class="dl">
+			<tr>
+				<td>request_id</td>
+				<td>Identifier of the get-offers request.</td>
+			</tr>
+			<tr>
+				<td>list</td>
+				<td>Array of <code>&lt;offer&gt;</code> objects.</td>
+			</tr>
+		</table>
+
+		<p>The <code>&lt;offer&gt;</code> object has fields:</p>
+		<table class="dl">
+			<tr>
+				<td>offer_id</td>
+				<td>Identifier of this offer</td>
+			</tr>
+			<tr>
+				<td>latitude, longitude</td>
+				<td>Coordinates of the car</td>
+			</tr>
+		</table>
+	</article>
+
+
+	<article class="command" id="take-offer">
+		<h1>The <code>take-offer</code> command</h1>
+
+		<p><code>data: {<br>
+			<span class="tab">
+			offer_id: &lt;str&gt;,<br>
+			deadline: &lt;utc&gt;,<br>
+			order_uid: &lt;str&gt;,<br>
+			address_place: &lt;str&gt;,<br>
+			address_street: &lt;str&gt;,<br>
+			address_house: &lt;str&gt;,<br>
+			address_building: &lt;str&gt;,<br>
+			address_entrance: &lt;str&gt;,<br>
+			customer_phone: &lt;str&gt;,<br>
+			customer_name: &lt;str&gt;,<br>
+			comments: &lt;str&gt;</span><br>
+		}</code></p>
+
+		<p>The <i>take-offer</i> message tells the taxi server to fulfil the previously generated offer <var>offer_id</var> by sending the order to the driver specified in the offer.</p>
+
+		<p>The taxi server is expected to assign the identifier <var>order_uid</var> to the order for later referencing. Data fields <var>address_place</var>, <var>address_street</var>, <var>address_house</var>, <var>address_building</var>, <var>address_entrance</var>, <var>comments</var>, <var>customer_name</var>, and <var>customer_phone</var> provide additional information about the order which may be useful for the driver.</p>
+
+		<p>The <var>deadline</var> field contains UTC time in seconds of the moment by which the request must be resolved.</p>
+	</article>
+
+	<article class="command" id="offer-ok">
+		<h1>The <code>offer-ok</code> message</h1>
+
+		<p><code>data: {<br>
+			<span class="tab">
+			offer_id: &lt;str&gt;,<br>
+			car_name: &lt;str&gt;,<br>
+			car_color: &lt;str&gt;,<br>
+			car_plate: &lt;str&gt;,<br>
+			driver_name: &lt;str&gt;,<br>
+			arrival_time: &lt;utc&gt;</span><br>
+		}</code></p>
+
+		<p>The <code>offer-ok</code> message tells that the order corresponding to the offer referenced in the <code>offer_id</code> field has been created and assigned to a driver.</p>
+
+		<p>The <code>arrival_time</code> field contains the UTC timestamp of the time when the driver is expected to arrive at the order location.</p>
+	</article>
+
+	<article class="command">
+		<h1>offer-failed</h1>
+		<table class="dl">
+			<tr>
+				<td>sid</td>
+				<td>Service identifier</td>
+			</tr>
+			<tr>
+				<td>offer_id</td>
+				<td>Offer identifier</td>
+			</tr>
+		</table>
+	</article>
+</article>
+
+<article>
+	<h1>Tracking orders</h1>
+
+	<article class="command" id="order-status">
+		<h1>order-status</h1>
+
+		<p><code>data: {uid, status}</code></p>
+
+		<p>The <i>order-status</i> message tells the master server the new status of the order with identifier <var>uid</var>.</p>
+	</article>
+
+	<article class="command" id="car-position">
+		<h1>The <code>car-position</code> message</h1>
+
+		<p><code>data: {<br>
+			<span class="tab">
+			uid: &lt;string&gt;,<br>
+			latitude: &lt;float&gt;,<br>
+			longitude: &lt;float&gt;</span><br>
+		}</code></p>
+
+		<p>The <code>car-position</code> message tells the center server the location of car assigned to the order <var>uid</var>.</p>
+	</article>
+
+	<article class="command">
+		<h1>order-stats</h1>
+		<table class="dl">
+			<tr>
+				<td>uid</td>
+				<td>Order identifier</td>
+			</tr>
+			<tr>
+				<td>price</td>
+				<td>Order price</td>
+			</tr>
+		</table>
+	</article>
+
+	<article class="command">
+		<h1>cancel-order</h1>
+		<p>The master server sends this message to cancel the order.</p>
+		<table class="dl">
+			<tr>
+				<td>uid</td>
+				<td>Order identifier</td>
+			</tr>
+		</table>
+	</article>
+</article>
+
+<article>
+	<h1>Synchronising order states</h1>
+
+	<p>The master server may request an update of order states after the connection between the servers was interrupted. The master server will create of list of its current orders with their statuses and send it to the taxi server in an <i>update-orders</i> message. The taxi server will respond with a similar list, enclosed in an <i>orders-update</i> message, omitting those orders which haven’t changed.</p>
+
+	<article class="command" id="update-orders">
+		<h1>update-orders</h1>
+
+		<p><code>data: {<br>
+			<span class="tab">
+			list: [<br>
+				<span class="tab">
+				{uid, status},<br>
+				...</span><br>
+			]</span><br>
+		}</code></p>
+
+		<p>The <i>update-orders</i> message requests the taxi server to create and send a list of status updates for the orders mentioned in the message.</p>
+
+		<p>The <var>list</var> data field contains a list of objects with fields <var>uid</var> and <var>status</var>; <var>uid</var> is an order identifier and <var>status</var> is its last known status, from the master server’s side.</p>
+	</article>
+
+	<article class="command" id="orders-update">
+		<h1>orders-update</h1>
+
+		<p><code>data: {<br>
+			<span class="tab">
+			list: [<br>
+				<span class="tab">
+				{uid, status},<br>
+				...</span><br>
+			]</span><br>
+		}</code></p>
+
+		<p>The <i>orders-update</i> message tells the master server which orders of those mentioned in the preceding <i>update-orders</i> message have changed their state.</p>
+
+		<p>The <var>list</var> data field is similar to that of the <i>update-orders</i> message.</p>
+	</article>
+</article>
+
+<article id="s-free-cars">
+	<h1>Free cars information</h1>
+
+	<article class="command" id="get-free-cars">
+		<h1>The <code>get-free-cars</code> command</h1>
+
+		<p><code>data: {<br>
+			<span class="tab">
+			request_id: &lt;string&gt;,<br>
+			min_lat: &lt;float&gt;<br>
+			min_lon: &lt;float&gt;,<br>
+			max_lat: &lt;float&gt;,<br>
+			max_lon: &lt;float&gt;</span><br>
+		}</code></p>
+
+		<p>The <i>get-free-cars</i> command requests the taxi server to send a list of positions of free cars in the area with latitude range <span class="math">[<var>min_lat</var>; <var>max_lat</var>]</span> and longitude range <span class="math">[<var>min_lon</var>; <var>max_lon</var>]</span>. The <var>request_id</var> data field will contain a unique value identifying this request.</p>
+	</article>
+
+	<article class="command" id="free-cars">
+		<h1>The <code>free-cars</code> message</h1>
+
+		<p><code>data: {<br>
+			<span class="tab">
+			request_id: &lt;string&gt;,<br>
+			list: [{lat: &lt;float&gt;, lon: &lt;float&gt;}, ...]</span><br>
+		}</code></p>
+
+		<p>The <i>free-cars</i> message tells the center server coordinates of free cars located in the area specified in the preceding <i>get-free-cars</i> message with request identifier <var>request_id</var>. The <var>list</var> data field will contain an array of objects with <var>lat</var> and <var>lon</var> fields specifying latitude and longitude of each car.</p>
+	</article>
+</article>
+
+<script src="toc.js"></script>
+
+</body>
+</html>

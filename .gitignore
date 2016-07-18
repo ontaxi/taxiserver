@@ -1,0 +1,6 @@
+*.log
+server/out/obj/
+server/out/run
+panels/cache/
+panels/appfiles/libs/phpexcel
+panels/content/

@@ -1,0 +1,7 @@
+#cars-selector label {
+	display: inline;
+}
+
+#cars-selector span {
+	margin-right: 1em;
+}

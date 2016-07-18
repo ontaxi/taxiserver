@@ -1,0 +1,104 @@
+.chat-dialog {
+	width: 440px;
+}
+
+.chat-dialog .range-display {
+	display: block;
+	margin: 6px 6px 10px;
+	font-size: 12px;
+}
+
+.chat-dialog .output {
+	height: 300px;
+	height: 40vh;
+	width: 30em;
+	overflow-y: scroll;
+	cursor: default;
+}
+
+.chat-dialog .output time {
+	margin-right: 0.7em;
+	font-weight: bold;
+	opacity: 0.9;
+}
+
+.chat-dialog p {
+	margin: 0;
+}
+
+.chat-dialog h2 {
+	font-size: 1em;
+	margin-top: 2em;
+}
+
+.chat-dialog .output article {
+	margin-bottom: 2px;
+	border-radius: 2px;
+	padding: 8px;
+}
+
+.chat-dialog article.dispatcher {
+	background-color: #f3f3f9;
+	margin-right: 2em;
+}
+
+.chat-dialog article.driver {
+	background-color: #D3F3D3;
+	margin-left: 2em;
+}
+
+.chat-dialog textarea {
+	width: 410px;
+}
+
+.chat-dialog  .menu.phrases {
+	position: absolute;
+	width: 300px;
+	right: -300px;
+	bottom: 50px;
+	display: none;
+	padding: 1em;
+	background-image: linear-gradient(to bottom, white, #fafafa);
+	border-radius: 3px;
+	border: 1px solid #e5e5e5;
+	box-shadow: 0px 4px 10px -1px rgba(200, 200, 200, 0.7);
+}
+
+.chat-dialog .phrases.open {
+	display: block;
+}
+
+.content .chat-dialog .menu.phrases > div {
+	display: block;
+	font-weight: normal;
+}
+
+.chat-dialog .chat-buttons button {
+	background-color: white;
+	color: black;
+	overflow: hidden;
+	text-indent: 12px;
+	background-size: 16px auto;
+	background-position: 4px center;
+	background-repeat: no-repeat;
+	border-color: #d0d4de;
+}
+
+.chat-dialog button.phrases {
+	background-image: url("images/menu.svg");
+}
+
+.chat-dialog button.reset {
+	background-image: url("images/erase.svg");
+}
+
+.chat-dialog button.send {
+	background-image: url("images/send.svg");
+	background-color: #f0f5f9;
+	border-color: #92C5F0;
+}
+
+.chat-dialog button.send:hover {
+	border-color: #9bf092;
+	background-color: #E9FBE6;
+}

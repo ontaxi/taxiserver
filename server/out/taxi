@@ -1,0 +1,77 @@
+#!/bin/sh
+
+# The directory where logs will be saved
+# and the name for the current log
+LOGS_DIR=logs
+
+# Path to pid file
+PID=pid
+
+# Create the logs directory if needed
+if ! test -d $LOGS_DIR
+then
+	mkdir $LOGS_DIR || exit 1
+fi
+
+
+check_result=0
+
+checkpid() {
+	check_result=1
+	if test -f $PID
+	then
+		id=`cat $PID`
+		n=`ps -e -o pid,cmd | grep $id | grep taxi.php | wc -l`
+		if test $n -eq 1
+		then
+			check_result=0
+		fi
+	fi
+}
+
+start() {
+	# If already running, exit with error status
+	checkpid
+	if test $check_result -eq 0
+	then
+		exit 1
+	fi
+
+	(
+		php obj/taxi.php &
+		echo $! >$PID
+	) 2>$LOGS_DIR/err.log >$LOGS_DIR/out.log &
+	# Could be instead:
+	# | datelog -d $LOGS_DIR -c now.log &
+}
+
+stop() {
+	if ! test -f $PID
+	then
+		echo No pid file
+		exit 1
+	fi
+	kill `cat $PID`
+	rm $PID
+}
+
+check() {
+	checkpid
+	exit $check_result
+}
+
+case "$1" in
+	start)
+		start
+	;;
+	stop)
+		stop
+	;;
+	check)
+		check
+	;;
+	*)
+		echo "Usage: $0 {start|stop|check}"
+		exit 1
+	;;
+esac

@@ -1,0 +1,16 @@
+.emulation-datetime-local {
+	display: inline-block;
+	background-color: white;
+	border: thin solid #aaa;
+	padding: 0.1em;
+}
+.emulation-datetime-local input {
+	border: none !important;
+	width: 1.5em !important;
+	text-align: center;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+.emulation-datetime-local input.year {
+	width: 3em !important;
+}

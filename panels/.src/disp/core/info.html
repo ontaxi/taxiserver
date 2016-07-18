@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+html {
+	background-color: #fcfcfc;
+}
+body {
+	color: #222;
+	max-width: 14cm;
+	margin: auto;
+	font-size: 11pt;
+	line-height: 17pt;
+	font-family: sans-serif;
+	padding: 1cm 3cm;
+	background-color: white;
+	box-shadow: 2px 2px 7px #f0f0f0;
+}
+
+ul {
+	padding-left: 1em;
+}
+
+p {
+	margin: 0.5em 0;
+}
+
+p.disp {
+	margin-left: 3em;
+}
+
+var {
+	font-family: serif;
+}
+
+body > h1 {
+	font-size: 14pt;
+}
+
+article h1, section h1 {
+	font-size: 1em;
+	margin-bottom: 0;
+}
+
+article, section {
+	margin-bottom: 2em;
+}
+
+table {
+	margin: 1em 0;
+}
+
+table caption {
+	text-align: left;
+	font-style: italic;
+}
+
+table td {
+	padding-right: 1em;
+}
+
+</style>
+</head>
+<body>
+
+<h1>Dispatcher client</h1>
+
+<section>
+	<h1>Usage</h1>
+
+	<p class="disp"><code>var <var>disp</var> = new DispatcherClient();</code></p>
+
+	<p>The client connects to the server and starts processing messages.
+	Many of them are converted to events to which the application can
+	subscribe.</p>
+</section>
+
+<section>
+	<h1>General functionality</h1>
+
+	<section>
+		<h1>Functions</h1>
+
+		<article>
+			<h1>The <code>on</code> function</h1>
+
+			<p class="disp"><code><var>disp</var>.on(<var>eventName</var>, <var>callback</var>);</code></p>
+
+			<p>Adds the function <var>callback</var> as a listener for
+			events with name <var>eventName</var>.</p>
+		</article>
+
+		<article>
+			<h1>The <code>id</code> function</h1>
+			
+			<p class="disp"><code>var <var>id</var> = <var>disp</var>.id();</code></p>
+
+			<p>Returns the dispatcher's account identifier.</p>
+		</article>
+
+		<article>
+			<h1><code>param(paramName)</code></h1>
+
+			<p>Returns value or service configuration parameter <var>paramName</var>.</p>
+		</article>
+
+		<article>
+			<h1><code>fares()</code></h1>
+
+			<p>Returns array of service fares as `Fare` objects.</p>
+		</article>
+
+		<article>
+			<h1><code>findCustomer(phoneNumber)</code></h1>
+
+			<p>Finds the customer with the given phone number. Returns a <code>Promise</code> object which will be resolved with an object in form:</p>
+
+			<p><code>{"name": &lt;customer's name&gt; addresses: [&lt;address&gt;,...]}</code></p>
+
+			<p class="cont">where addresses is an array of <code>Address</code> objects.</p>
+		</article>
+	</section>
+
+	<section>
+		<h1>Events</h1>
+
+		<article>
+			<h1><code>ready</code></h1>
+
+			<p>The connection has established and all function can be used now.
+			This is a "persistent" event, meaning that newly added listeners
+			will be called even after the event has been fired.</p>
+		</article>
+
+		<article>
+			<h1><code>connection-error</code></h1>
+
+			<p>An error occured at the connection level. Connection timeout, no response and no authorisation are examples of such errors.</p>
+		</article>
+
+		<article>
+			<h1><code>service-log</code></h1>
+
+			<p>An entry has been added to the service log. "event.data.text"
+				contains the entry text.</p>
+		</article>
+	</section>
+</section>
+
+<section>
+	<h1>Drivers</h1>
+
+	<section>
+		<h1>Functions</h1>
+
+		<article>
+			<h1><code>drivers()</code></h1>
+
+			<p>Returns array of service drivers as "Driver" objects.</p>
+		</article>
+
+		<article>
+			<h1><code>driverGroups()</code></h1>
+
+			<p>Returns an array of driver groups as objects.</p>
+		</article>
+
+		<article>
+			<h1><code>getDriver(driverId)</code></h1>
+
+			<p>Returns a "Driver" object for the driver "driverId" or "null" if
+		there is no such driver.</p>
+		</article>
+
+		<article>
+			<h1>The <code>getCar</code> function</h1>
+
+			<p class="disp"><code><var>car</var> = <var>disp</var>.getCar(<var>carId</var>);</code></p>
+
+			<p>Returns the <code>Car</code> object for the car identified by <var>carId</var>, or <code>null</code> if there is no such car.</p>
+		</article>
+
+		<article>
+			<h1><code>getDriverCar(driverId)</code></h1>
+
+			<p>Returns a `Car` object for the car assigned to the driver `driverId`
+		or null if there is no such driver or the driver is not assigned
+		a car.</p>
+		</article>
+
+		<article>
+			<h1><code>blockDriver(driverId, seconds, reason)</code></h1>
+
+			<p>Blocks a driver with identifier `driverId` for time specified by
+		`seconds`. If reason is given, it must be a string describing the
+		block reason.</p>
+		</article>
+
+		<article>
+			<h1><code>unblockDriver(driverId)</code></h1>
+
+			<p>Unblocks a driver.</p>
+		</article>
+
+		<article>
+			<h1><code>driverAlarms()</code></h1>
+			<p>Returns an array of <code>Alarm</code> objects. Each such object has a key <code>driverId</code>.</p>
+		</article>
+	</section>
+
+	<section>
+		<h1>Events</h1>
+
+		<article>
+			<h1><code>driver-moved</code></h1>
+			<p>A driver's GPS coordinates have changed.</p>
+		</article>
+
+		<article>
+			<h1><code>driver-online-changed</code></h1>
+			<p>A driver's online status has changed. event.data.driver contains
+			the corresponding `Driver` object.</p>
+		</article>
+
+		<article>
+			<h1><code>driver-block-changed</code></h1>
+			<p>A driver has been blocked or unblocked. event.data.driver contains
+			the corresponding `Driver` object.</p>
+		</article>
+
+		<article>
+			<h1><code>driver-changed</code></h1>
+			<p>A driver's properties have changed. This is a meta-event which
+			covers other driver updates.</p>
+		</article>
+
+		<article>
+			<h1><code>driver-alarm-on</code></h1>
+			<p>A driver has sent an alarm message.</p>
+			<table>
+				<caption>Event data</caption>
+				<tr>
+					<td><code>driver</code></td>
+					<td>A corresponding <code>Driver</code> object.</td>
+				</tr>
+			</table>
+		</article>
+
+		<article>
+			<h1><code>driver-alarm-off</code></h1>
+			<p>A driver's alarm has been stopped.</p>
+			<table>
+				<caption>Event data</caption>
+				<tr>
+					<td><code>driver</code></td>
+					<td>A corresponding <code>Driver</code> object.</td>
+				</tr>
+			</table>
+		</article>
+	</section>
+</section>
+
+<section>
+	<h1>Orders</h1>
+
+		<article>
+			<h1>"Current orders"</h1>
+
+			<p>The client keeps a list of orders which is called here "current
+			orders list". The list contains all actually current orders of the
+			service, as well as a short backlog of recently closed orders. The
+			closed orders are removed from the list as their keeping time expires,
+			but while they are in the list and they have status "dropped", it is
+			possible to resend them.</p>
+		</article>
+
+		<section>
+		<h1>Order functions</h1>
+
+		<article>
+			<h1><code>orders()</code></h1>
+
+			<p>Returns array of orders which are current or closed and not old
+		enough to be removed.</p>
+		</article>
+
+		<article>
+			<h1><code>getOrder(uid)</code></h1>
+
+			<p>Returns order with the given identifier.</p>
+		</article>
+
+		<article>
+			<h1><code>saveOrder(order)</code></h1>
+
+			<p>Sends a command to the server to save or update the order
+		represented by the given `Order` object. Returns a `Promise` object
+		which will be fulfilled after the order is saved.</p>
+		</article>
+
+		<article>
+			<h1><code>sendOrder(order, driverId)</code></h1>
+
+			<p>Sends a command to the server to dispatch the given order to
+		drivers. If <var>driverId</var> is given, sends the order directly to that driver.</p>
+
+		<p>The <code>sendOrder</code> function returns a <code>Promise</code> object which will be fulfilled when the driver is assigned, the value being a <code>Driver</code> object representing the assigned driver.</p>
+		</article>
+
+		<article>
+			<h1><code>cancelOrder(uid, reason)</code></h1>
+
+			<p>Sends a command to the server to cancel the order with identifier
+		`uid`, with cancel reason set to the given value.</p>
+		</article>
+
+		<article>
+			<h1><code>getDriverOrders(driverId)</code></h1>
+
+			<p>Returns array of `Order` objects representing orders assigned to
+		the driver `driverId`.</p>
+		</article>
+	</section>
+
+
+	<section>
+		<h1>Events</h1>
+
+
+		<article>
+			<h1><code>order-added</code></h1>
+			<p>An order has been added to the "current orders" list.</p>
+		</article>
+
+		<article>
+			<h1><code>order-removed</code></h1>
+			<p>An order has been removed from the orders list.</p>
+		</article>
+
+		<article>
+			<h1><code>order-changed</code></h1>
+			<p>An order has been changed.</p>
+		</article>
+	</section>
+</section>
+
+<section>
+	<h1>Working with queues</h1>
+
+	<section>
+		<h1>Queue functions</h1>
+
+		<article>
+			<h1><code>queues()</code></h1>
+
+			<p>Returns array of all known queues.</p>
+		</article>
+
+		<article>
+			<h1><code>getQueue(queueId)</code></h1>
+
+			<p>Returns a `Queue` object for the specified queue or `null` if there
+		is no such queue.</p>
+		</article>
+
+		<article>
+			<h1><code>changeQueue(queueId, min, priority)</code></h1>
+
+			<p>Sends a command to the server to change priority and minimum values
+		of the queue `queueId` to the given values.</p>
+		</article>
+	</section>
+
+		<section>
+		<h1>Functions related to queue assignments</h1>
+
+		<article>
+			<h1><code>getQueueDrivers(queueId)</code></h1>
+
+			<p>Returns array of drivers assigned to the given queue. The order
+		in the array corresponds to the order in the queue.</p>
+		</article>
+
+		<article>
+			<h1><code>getDriverQueue(driverId)</code></h1>
+
+			<p>Returns a `Queue` object for the queue the given driver is in.</p>
+		</article>
+
+		<article>
+			<h1><code>allowedQueues(driverId)</code></h1>
+
+			<p>Returns array of identifiers of queues that the driver is allowed
+		to be assigned in.</p>
+		</article>
+
+		<article>
+			<h1><code>getQueueGroups(queueId)</code></h1>
+
+			<p>// undecided</p>
+		</article>
+
+		<article>
+			<h1><code>changeDriverGroup(driverId, groupId)</code></h1>
+
+			<p>Moves the driver to another group.</p>
+		</article>
+
+		<article>
+			<h1><code>haveNonQueueGroups()</code></h1>
+
+			<p>Returns `true` if there are drivers who don't have access to any
+		of the service queues.</p>
+		</article>
+
+		<article>
+			<h1><code>restoreDriverQueue(driverId)</code></h1>
+
+			<p>Sends a command to the server to restore previous position of the
+		driver in the queue.</p>
+		</article>
+
+		<article>
+			<h1><code>assignDriverQueue(driverId, queueId, pos)</code></h1>
+
+			<p>Sends a command to the server to assign the driver to the queue
+		`queueId` at position `pos`.</p>
+		</article>
+
+		<article>
+			<h1><code>removeDriverQueue(driverId)</code></h1>
+
+			<p>Sends a command to the server to remove driver `driverId` from their
+		current queue.</p>
+		</article>
+
+		<article>
+			<h1><code>suggestQueue(driverId, queueId, pos)</code></h1>
+
+			<p>Sends a command to the server to send a suggestion to the driver to
+		get assigned to the queue `queueId` at position `pos`.</p>
+		</article>
+	</section>
+
+
+	<section>
+		<h1>Events</h1>
+
+		<article>
+			<h1><code>queues-changed</code></h1>
+			<p>One or more queues have changed their parameters.</p>
+		</article>
+
+		<article>
+			<h1><code>queue-assignments-changed</code></h1>
+			<p>One or more queue assignments have changed.</p>
+		</article>
+	</section>
+</section>
+
+
+<section>
+	<h1>Driver sessions</h1>
+
+	<section>
+		<h1>Session functions</h1>
+
+		<article>
+			<h1><code>sessionsEnabled()</code></h1>
+
+			<p>Returns true if driver sessions are enabled for the service account.</p>
+		</article>
+
+		<article>
+			<h1><code>sessions()</code></h1>
+
+			<p>Returns array of currently open sessions as Session objects.</p>
+		</article>
+
+		<article>
+			<h1><code>sessionRequired(driverId)</code></h1>
+
+			<p>Returns `true` if service sessions are enabled and the specified
+		driver doesn't have an open session.</p>
+		</article>
+
+		<article>
+			<h1><code>openSession(driverId, odometer)</code></h1>
+
+			<p>Opens a session for the specified driver. The odometer value is
+		stored in the session's record and the driver car's record.</p>
+		</article>
+
+		<article>
+			<h1><code>closeSession(driverId, odometer)</code></h1>
+
+			<p>Closes the current session of the specified driver. The odometer
+		value is stored in the session's record and the driver car's record.</p>
+		</article>
+	</section>
+
+
+	<section>
+		<h1>Events</h1>
+
+		<article>
+			<h1><code>session-requested</code></h1>
+			<p>A driver has requested a session to be opened for them.</p>
+		</article>
+
+		<article>
+			<h1><code>session-opened</code></h1>
+			<p>A session has been opened.</p>
+		</article>
+
+		<article>
+			<h1><code>session-closed</code></h1>
+			<p>A session has been closed.</p>
+		</article>
+
+		<article>
+			<h1><code>sessions-changed</code></h1>
+			<p>A meta-event which covers <code>session-opened</code> and <code>session-closed</code> events.</p>
+		</article>
+	</section>
+</section>
+
+<section>
+	<h1>Chat</h1>
+
+	<section>
+		<h1>Functions</h1>
+
+		<article>
+			<h1><code>getChatMessages(driverId, from, to)</code></h1>
+
+			<p>Requests the list of messages from a driver for a given period.
+		`from` and `to` are UTC values. Returns a `Promise` object which
+		will be resolved with an array of `Message` objects.</p>
+		</article>
+
+		<article>
+			<h1><code>sendChatMessage(driverId, str)</code></h1>
+
+			<p>Sends a chat message to a driver.</p>
+		</article>
+
+		<article>
+			<h1><code>broadcastChatMessage(driverIds, str)</code></h1>
+
+			<p>Sends a chat message to the drivers identified in the <var>driverIds</var> array. Returns a <code>Promise</code> object which will be resolved after the command is executed on the server side.</p>
+		</article>
+
+		<article>
+			<h1><code>haveNewMessages(driverId)</code></h1>
+
+			<p>Returns `true` if there are unread messages from the given driver.</p>
+		</article>
+
+		<article>
+			<h1><code>markChatMessages(driverId, lastId)</code></h1>
+
+			<p>Marks all messages from a driver up to the message with identifier
+		equal to `lastId` as read.</p>
+		</article>
+	</section>
+
+	<section>
+		<h1>Events</h1>
+
+		<article>
+			<h1><code>chat-message-received</code></h1>
+			<p>A chat message has been received. event.data.message is a `message` object representing the received message.</p>
+		</article>
+
+		<article>
+			<h1><code>chat-front-changed</code></h1>
+			<p>A message has been marked as read or a new unread message has been 	received. event.data.driver is a <code>Driver</code> object representing the driver whose message was received or marked; event.data.unread is the number of unread messages from the driver.</p>
+		</article>
+	</section>
+</section>
+
+<section>
+	<h1>Locations</h1>
+
+	<section>
+		<h1>Functions</h1>
+
+		<article>
+			<h1>locations</h1>
+			<p><code>locations()</code></p>
+			<p>Returns array of <code>Location</code> objects for queue locations.</p>
+		</article>
+
+		<article>
+			<h1><code>getLocation</code></h1>
+
+			<p><code>getLocation(locationId)</code></p>
+
+			<p>Returns specified queue location as a `Location` object, or `null`
+			if there is no such location.</p>
+		</article>
+
+		<article>
+			<h1><code>getQueueLocation(queueId)</code></h1>
+
+			<p>Returns a `Location` object for the location associated with the
+			specified queue, or `null` of there is no such queue or the queue
+			does not have an associated location.</p>
+		</article>
+
+		<article>
+			<h1><code>suggestLocations(term)</code></h1>
+
+			<p>Returns a `Promise` object that will be resolved with a list of
+			`Location` objects having the name starting with the string given
+			in `term`. The case of the term string is ignored.</p>
+		</article>
+	</section>
+</section>
+
+<section>
+	<h1>Imitations</h1>
+	<section>
+		<h1>Functions</h1>
+
+		<article>
+			<h1><code>imitationsEnabled()</code></h1>
+
+			<p>Returns `true` if driver imitations are enabled for the service.</p>
+		</article>
+
+		<article>
+			<h1><code>setDriverOnline(driverId, online)</code></h1>
+
+			<p>Sets online status of the imitation for the specified driver.</p>
+		</article>
+	</section>
+</section>
+
+<section>
+	<h1>User settings</h1>
+
+	<section>
+		<h1>Functions</h1>
+
+		<article>
+			<h1><code>getSetting(name, defaultValue)</code></h1>
+
+			<p>Returns the value of setting <i>name</i>, or value of <i>defaultValue</i> if setting with name <i>name</i> is not defined.</p>
+		</article>
+
+		<article>
+			<h1><code>changeSetting(name, newValue)</code></h1>
+
+			<p>Sets the value of setting <i>name</i> to <i>newValue</i>. The value is set but not saved.</p>
+		</article>
+
+		<article>
+			<h1><code>saveSettings()</code></h1>
+
+			<p>Saves all settings on the server. Returns a <code>Promise</code> object which will be fulfilled after the settings are saved.</p>
+		</article>
+	</section>
+</section>
+<script src="toc.js?auto-id"></script>
+</body>
+</html>

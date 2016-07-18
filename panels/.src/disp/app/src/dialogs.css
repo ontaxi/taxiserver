@@ -1,0 +1,65 @@
+.w-layer {
+	background: white;
+	background-image: linear-gradient(to bottom, white, #fafafa);
+	border-radius: 3px;
+	border: 1px solid #e5e5e5;
+	box-shadow: 0px 4px 10px -1px rgba(200, 200, 200, 0.7);
+	padding: 1em;
+
+	opacity: 0.95;
+	transition-property: opacity;
+	transition-duration: 0.5s;
+	z-index: 1;
+}
+
+.w-layer.focus {
+	opacity: 1.0;
+	transition-duration: 0s;
+	z-index: 2;
+	cursor: grab;
+	border-color: #D2D2F2;
+}
+
+.w-layer.dragging {
+	cursor: grabbing;
+}
+
+.w-dialog .content {
+	margin-bottom: 1em;
+	max-width: 45em;
+	line-height: 18px;
+}
+
+.w-dialog button {
+	min-width: 5em;
+	margin-right: 2px;
+}
+
+.w-dialog .content .menu > div {
+	display: inline-block;
+	text-align: center;
+	min-width: 2.2em;
+	border-radius: 2px;
+	padding: 2px 6px;
+	margin-bottom: 2px;
+	margin-right: 2px;
+	background-color: #BACCEF;
+	color: black;
+	font-weight: bold;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.w-dialog .content .menu > div:hover {
+	background-color: powderblue;
+}
+
+.w-toast {
+	background-color: black;
+	border-radius: 4px;
+	color: white;
+	font-weight: bold;
+	padding: 0.5em 1em;
+	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+	z-index: 2;
+}

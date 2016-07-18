@@ -1,0 +1,80 @@
+
+.order-form {
+	width: 392px;
+}
+
+.order-form .title {
+	margin: -1em -1em 1em;
+	padding: 0.5em 1em;
+}
+
+.order-form .title.speaking {
+	background-color: green;
+	color: white;
+}
+
+.order-form .title.hangup {
+	background-color: #a00;
+	color: white;
+}
+
+.order-form label {
+	display: inline-block;
+	width: 9em;
+	vertical-align: top;
+	margin-top: 6px;
+}
+
+.order-form label.inline {
+	display: inline;
+}
+
+.order-form input.wait {
+	background-image: url("images/input-waiting.gif");
+	background-size: 100%;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.order-form input,
+.order-form textarea {
+	width: 190px;
+}
+
+.order-form input[type="radio"],
+.order-form input[type="checkbox"] {
+	width: auto;
+}
+
+.order-form input.house,
+.order-form input.building,
+.order-form input.entrance,
+.order-form input.apartment {
+	width: 50px;
+}
+
+.order-form .history {
+	background-image: url("images/list.svg");
+	background-size: 18px 18px;
+	background-repeat: no-repeat;
+	background-position: center;
+	text-indent: -99999px;
+	overflow: hidden;
+}
+
+.order-form .driver,
+.order-form .queue-loc,
+.order-form .loc,
+.order-form .dest-section input,
+.order-form .dest-section select {
+	font-weight: bold;
+}
+
+.order-form .more {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.order-form .more:after {
+	content: "...";
+}

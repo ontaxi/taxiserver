@@ -1,0 +1,3 @@
+#!/bin/sh
+
+jscat lib src > ../pages.js

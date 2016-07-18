@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Driver &ndash; taxi server</title>
+<link rel="stylesheet" href="doc.css">
+</head>
+<body class="draft">
+
+<script>document.write(document.lastModified);</script>
+
+<h1>Driver &ndash; taxi server</h1>
+
+<article>
+	<h1>Протокол работы с сервером</h1>
+
+	<article>
+		<h1>Общие сообщения</h1>
+
+		<article class="command" id="error">
+			<h1>Сообщение <code>error</code></h1>
+			<p><code>data: {<br>
+				<span class="tab">
+				errstr: &lt;str&gt;</span><br>
+			}</code></p>
+
+			<p>Сообщение <code>error</code> высылается приложению, когда при обработке какого-либо сообщения приложения на сервере возникает ошибка. Поле <code>errstr</code> содержит текстовое описание ошибки.</p>
+		</article>
+	</article>
+
+	<article>
+		<h1>Авторизация</h1>
+
+		<p>Первым сообщением после установки соединения с сервером должна быть команда <code>taxi-login</code>. Ответом на него будет сообщение <code>login-ok</code> или <code>login-failed</code>.</p>
+
+		<p>После получения сообщения <code>login-ok</code> приложение не должно больше посылать <code>taxi-login</code> через текущее соединение.</p>
+
+		<article class="command" id="taxi-login">
+			<h1>Команда <code>taxi-login</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				login: &lt;string&gt;,<br>
+				password: &lt;string&gt;,<br>
+				version: &lt;string&gt;,<br>
+				relogin: &lt;1/0&gt;</span><br>
+			}</code></p>
+
+			<p>Команда <code>taxi-login</code> запрашивает сервер авторизовать текущее соединение.</p>
+
+			<table>
+				<tr>
+					<td><code>login</code></td>
+					<td>Имя пользователя</td>
+				</tr><tr>
+					<td><code>password</code></td>
+					<td>Пароль</td>
+				</tr><tr>
+					<td><code>version</code></td>
+					<td><a href="#fn-appver" class="footnote">Версия приложения</a>.</td>
+				</tr><tr>
+					<td><code>relogin</code></td>
+					<td><code>1</code>, если это повторное подключение после потери связи; <code>0</code>, если нет.</td>
+				</tr>
+			</table>
+
+			<p class="footnote" id="fn-appver">Для строки с версией приложения  рекомендуется форма <code>"&lt;name&gt; &lt;number&gt;"</code>, например, <code>"taxicom&nbsp;42"</code>.</p>
+
+		</article>
+
+		<article class="command" id="login-ok">
+			<h1>Сообщение <code>login-ok</code></h1>
+
+			<p><code>data: {}</code></p>
+
+			<p>Сообщение <code>login-ok</code> передаёт приложению, что авторизация прошла успешно.</p>
+		</article>
+
+		<article class="command" id="login-failed">
+			<h1>Сообщение <code>login-failed</code></h1>
+
+			<p><code>data: null</code></p>
+
+			<p>Сообщение <code>login-failed</code> передаёт приложению, что авторизация не удалась.</p>
+		</article>
+
+		<article class="command" id="taxi-logout">
+			<h1>Команда <code>taxi-logout</code></h1>
+
+			<p><code>data: null</code></p>
+
+			<p>Команда <code>taxi-logout</code> запрашивает сервер завершить текущий сеанс связи с водителем и пометить его как закончившего работу.</p>
+
+			<p>После отправки команды <code>taxi-logout</code> приложение не должно посылать никаких данных и должно закрыть соединение.</p>
+		</article>
+	</article>
+
+	<article>
+		<h1>Проверка связи</h1>
+
+		<p>Чтобы оценить время, которое уходит на обмен парой сообщений, приложение шлёт сообщение <code>ping</code> и получает в ответ сообщение <code>pong</code>. В&nbsp;сообщении <code>ping</code> приложение сохраняет текущее время по своим часам. Сервер пересылает это время обратно в сообщении <code>pong</code> без изменений. При получении сообщения <code>pong</code> приложение отнимает текущее время от времени, указанного в сообщении, и получает оценку своей сетевой задержки.</p>
+
+		<article class="command" id="ping">
+			<h1>Команда <code>ping</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				time: &lt;int&gt;,<br>
+				lag: &lt;int&gt;</span><br>
+			}</code></p>
+
+			<table>
+				<tr>
+					<td><code>time</code></td>
+					<td>Текущее время по часам приложения в миллисекундах.</td>
+				</tr>
+				<tr>
+					<td><code>lag</code></td>
+					<td>Оценка задежрки в миллисекундах после предыдущего замера, или <code>0</code>, если это первая отправка.</td>
+				</tr>
+			</table>
+		</article>
+
+		<article class="command" id="pong">
+			<h1>Сообщение <code>pong</code></h1>
+			<p><code>data: {<br>
+				<span class="tab">
+				time: &lt;int&gt;</span><br>
+			}</code></p>
+			<dl>
+				<dt>time</dt>
+				<dd>Время, посланное на сервер в сообщении ping.</dd>
+			</dl>
+		</article>
+	</article>
+
+	<article>
+		<h1>Пересылка координат</h1>
+
+		<article id="position">
+			<h1>Сообщение <code>position</code></h1>
+			<p><code>data: {<br>
+				<span class="tab">
+				latitude: &lt;double&gt;,<br>
+				longitude: &lt;double&gt;</span><br>
+			}</code></p>
+
+			<p>Сообщение <code>position</code> передаёт серверу текущие координаты водителя.</p>
+		</article>
+	</article>
+
+	<article>
+		<h1>Работа с заказами</h1>
+
+		<article id="order-states">
+			<h1>Состояния заказов</h1>
+
+			<p>Заказ проходит через 8 состояний, но приложение водителя будет работать только с состояниями из таблицы ниже.</p>
+
+			<table class="dl">
+				<tr>
+					<td>postponed</td>
+					<td>Заказ отложен.</td>
+				</tr><tr>
+					<td>waiting</td>
+					<td>Ожидание ответа водителей.</td>
+				</tr><tr>
+					<td>assigned</td>
+					<td>Водитель назначен, но заказ ещё не начат.</td>
+				</tr><tr>
+					<td>arrived</td>
+					<td>Водитель прибыл на место.</td>
+				</tr><tr>
+					<td>started</td>
+					<td>Заказ начат, счётчик запущен.</td>
+				</tr>
+			</table>
+		</article>
+
+		<article id="order-format" class="command">
+			<h1>Объект <code>order</code></h1>
+
+			<p><code>{<br>
+				<span class="tab">
+				order_id: &lt;int&gt;,<br>
+				latitude: &lt;double&gt;,<br>
+				longitude: &lt;double&gt;,<br>
+				from_address: &lt;string&gt;,<br>
+				to_address: &lt;string&gt;,<br>
+				comments: &lt;string&gt;,<br>
+				customer_phone: &lt;string&gt;,<br>
+				customer_name: &lt;string&gt;,<br>
+				importance: &lt;int&gt;,<br>
+				status: &lt;string&gt;,<br>
+				car_type: &lt;string&gt;</span><br>
+			}</code></p>
+
+			<table>
+				<tr>
+					<td><code>order_id</code></td>
+					<td>Идентификатор заказа, целое число.</td>
+				</tr><tr>
+					<td><code>latitude</code>, <code>longitude</code></td>
+					<td>GPS-координаты клиента, вещественные цисла.</td>
+				</tr><tr>
+					<td><code>from_address</code>, <code>to_address</code></td>
+					<td>Адрес клиента и адрес назначения, текст.</td>
+				</tr><tr>
+					<td><code>comments</code></td>
+					<td>Комментарии к заказу.</td>
+				</tr><tr>
+					<td><code>customer_phone</code></td>
+					<td>Номер телефона клиента, например +375291234567.</td>
+				</tr><tr>
+					<td><code>customer_name</code></td>
+					<td>Имя клиента.</td>
+				</tr><tr>
+					<td><code>importance</code></td>
+					<td>&laquo;Важность&raquo; заказа, целое неотрицательное число. Заказы со значением <code>importance</code> больше нуля должны иметь отличимый диалог.</td>
+				</tr><tr>
+					<td><code>status</code></td>
+					<td>Состояние заказа.</td>
+				</tr><tr>
+					<td><code>car_type</code></td>
+					<td>Тип заказанной машины (см. ниже).</td>
+				</tr>
+			</table>
+
+			<table>
+				<caption>Значения поля <code>car_type</code></caption>
+				<tr>
+					<td><code>ordinary</code></td>
+					<td>&laquo;Обычный&raquo; заказ (любая пассажирская машина)</td>
+				</tr>
+				<tr>
+					<td><code>sedan</code></td>
+					<td>Седан</td>
+				</tr>
+				<tr>
+					<td><code>hatchback</code></td>
+					<td>Хетчбек</td>
+				</tr>
+				<tr>
+					<td><code>estate</code></td>
+					<td>Универсал</td>
+				</tr>
+				<tr>
+					<td><code>minivan</code></td>
+					<td>Минивен</td>
+				</tr>
+			</table>
+		</article>
+
+		<article class="command" id="get-current-orders">
+			<h1>Команда <code>get-current-orders</code></h1>
+
+			<p>Сообщение <code>get-current-orders</code> запрашивает сервер выслать список текущих заказов, назначенных водителю.</p>
+		</article>
+
+		<article class="command" id="current-orders">
+			<h1>Сообщение <code>current-orders</code></h1>
+
+			<p>Сообщение <code>current-orders</code> передаёт приложению список текущих заказов, назначенных водителю.</p>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				list: [&lt;order&gt;, ...]</span><br>
+			}</code></p>
+
+			<p>Поле <code>list</code> содержит массив заказов в виде объектов <code>order</code>.</p>
+		</article>
+
+		<article class="command" id="fares">
+			<h1>Сообщение <code>fares</code></h1>
+
+			<p>Сервер сообщает список тарифов для таксометра.</p>
+
+			<table class="dl">
+				<caption>data</caption>
+				<tr>
+					<td>list</td>
+					<td>Массив объектов <code>&lt;fare&gt;</code></td>
+				</tr>
+			</table>
+
+			<table class="dl">
+				<caption>Объект <code>&lt;fare&gt;</code></caption>
+				<tr>
+					<td>name</td>
+					<td>Название тарифа</td>
+				</tr>
+				<tr>
+					<td>fare_id</td>
+					<td>Идентификатор тарифа</td>
+				</tr>
+				<tr>
+					<td>start</td>
+					<td>Стартовая цена</td>
+				</tr>
+				<tr>
+					<td>min</td>
+					<td>Минимальная цена на чеке</td>
+				</tr>
+				<tr>
+					<td>moving</td>
+					<td>Цена за километр пути со скоростью выше 20 км/ч</td>
+				</tr>
+				<tr>
+					<td>standing</td>
+					<td>Цена за час времени при движении со скоростью ниже 20 км/ч</td>
+				</tr>
+			</table>
+		</article>
+
+		<article class="command" id="create-order">
+			<h1>Команда <code>create-order</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				req_id: &lt;string&gt;,<br>
+				started: &lt;1/0&gt;</span><br>
+			}</code>
+
+			<p>Команда <code>create-order</code> запрашивает сервер создать новый заказ от имени водителя и выслать данные созданного заказа.</p>
+
+			<p>Поле <code>req_id</code> содержит произвольную строку, сгенерированную приложением, и служит идентификатором запроса. Ответ сервера в виде сообщения <code>order-created</code> будет содержать такое же поле с тем же значением.</p>
+
+			<p>Если поле <code>started</code> содержит значение <code>1</code>, то созданный заказ сразу помечается как начатый. Иначе приложение должно будет отправить сообщение <code>order-started</code> после создания заказа.</p>
+
+			<p>Если заказ не удалось создать, в ответ придёт сообщение <code>order-failed</code>.</p>
+		</article>
+
+		<article class="command" id="order-created">
+			<h1>Сообщение <code>order-created</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				req_id: &lt;string&gt;,<br>
+				order: &lt;order&gt;</span><br>
+			}</code></p>
+
+			<p>Сообщение <code>order-created</code> передаёт приложению, что заказ, запрошенный в предыдущей команде <code>create-order</code>, успешно создан.</p>
+
+			<p>Поле <code>req_id</code> содержит значение, заданное приложением в его команде <code>create-order</code>. Поле <code>order</code> содержит описание созданного заказа в виде объекта <code>order</code>.</p>
+		</article>
+
+		<article class="command" id="order-failed">
+			<h1>Сообщение <code>order-failed</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				req_id: &lt;string&gt;,<br>
+				reason: &lt;string&gt;</span><br>
+			}</code></p>
+
+			<p>Сообщение <code>order-created</code> передаёт приложению, что заказ, запрошенный в предыдущей команде <code>create-order</code> не удалось создать.</p>
+
+			<p>Поле <code>reason</code> содержит строку с описанием причины.</p>
+
+			<table>
+				<caption>Возможные значения поля <code>reason</code></caption>
+				<tr>
+					<td><code>no_coordinates</code></td>
+					<td>Координаты водителя не определены.</td>
+				</tr>
+				<tr>
+					<td><code>disabled</code></td>
+					<td>Создание водительских заказов отключено для водителя или службы.</td>
+				</tr>
+				<tr>
+					<td><code>no_session</code></td>
+					<td>Водитель не вышел на смену.</td>
+				</tr>
+				<tr>
+					<td><code>unknown_error</code></td>
+					<td>Внутренняя ошибка.</td>
+				</tr>
+			</table>
+
+		</article>
+
+		<article class="command" id="new-order">
+			<h1>Сообщение <code>new-order</code></h1>
+
+
+		</article>
+
+		<article class="command" id="decline-order">
+			<h1>Команда <code>decline-order</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				order_id: &lt;int&gt;,<br>
+				reason: &lt;string&gt;</span><br>
+			}</code></p>
+
+			<p>Команда <code>decline-order</code> говорит серверу пометить водителя как отказавшегося от присланного ему заказа <code>order_id</code>. Поле <code>reason</code> содержит причину отказа.</p>
+
+			<table>
+				<caption>Значения поля <code>reason</code></caption>
+				<tr>
+					<td><code>driver</code></td>
+					<td>Водитель нажал на кнопку «отказаться».</td>
+				</tr>
+				<tr>
+					<td><code>timeout</code></td>
+					<td>Водитель не отреагировал на сообщение в установленное время, отказ выслан автоматически.</td>
+				</tr>
+				<tr>
+					<td><code>busy</code></td>
+					<td>Приложение показывает водителю диалог для другого заказа.</td>
+				</tr>
+				<tr>
+					<td><code>full</code></td>
+					<td>Водитель уже имеет слишком много заказов.</td>
+				</tr>
+				<tr>
+					<td><code>unknown</code></td>
+					<td>Неизвестная причина (по умолчанию); не должна встречаться.</td>
+				</tr>
+			</table>
+		</article>
+
+		<article class="command" id="accept-order">
+			<h1>Команда <code>accept-order</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				order_id: &lt;int&gt;,<br>
+				arrival_time_m: &lt;int&gt;</span><br>
+			}</code></p>
+
+			<p>Команда <code>accept-order</code> говорит серверу, что водитель желает принять заказ <code>order_id</code> и может быть на месте через <code>arrival_time_m</code> минут.</p>
+
+			<table>
+				<tr>
+					<td><code>order_id</code></td>
+					<td>Номер заказа.</td>
+				</tr>
+				<tr>
+					<td><code>arrival_time_m</code></td>
+					<td>Время, через которое водитель будет на месте, в минутах.</td>
+				</tr>
+			</table>
+
+		</article>
+
+		<article class="command" id="notify-user">
+			<h1>Команда <code>notify-user</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				order_id: &lt;int&gt;</span><br>
+			}</code></p>
+
+			<p>Команда <code>notify-user</code> говорит серверу послать клиенту и диспетчерам сигнал о том, что водитель прибыл на место.</p>
+		</article>
+
+		<article class="command" id="order-started">
+			<h1>Сообщение <code>order-started</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				order_id: &lt;int&gt;</span><br>
+			}</code></p>
+
+			<p>Сообщение <code>order-started</code> передаёт серверу, что заказ <code>order_id</code> начат и таксометр запущен.</p>
+		</article>
+
+
+		<article class="command" id="order-finished">
+			<h1>Сообщение <code>order-finished</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				order_id: &lt;int&gt;,<br>
+				price: &lt;int&gt;,<br>
+				stats: [&lt;trip-stats&gt;, ...]</span><br>
+			}</code></p>
+
+			<p>Сообщение <code>order-finished</code> передаёт серверу, что таксометр остановлен и заказ с номером <code>order_id</code> завершён.</p>
+
+			<p>Поле <code>price</code> содержит суммарную цену за заказ в рублях. Поле <code>stats</code> содержит детализацию цены в виде массива объектов <code>trip-stats</code>.</p>
+
+			<p>В цену одной поездки может входить несколько участков пути, пройденных с разными тарифами. Каждое переключение тарифа в ходе одной поездки приводит к созданию нового объекта <code>trip-stats</code>.</p>
+
+			<p>Объект <code>trip-stats</code> имеет вид:</p>
+
+			<p class="disp"><code>{<br>
+				<span class="tab">
+				fare_id: &lt;int&gt;,<br>
+				distance: &lt;int&gt;,<br>
+				total_distance: &lt;int&gt;,<br>
+				slow_time: &lt;int&gt;,<br>
+				total_time: &lt;int&gt;</span><br>
+			}</code></p>
+
+			<table>
+				<tr>
+					<td><code>fare_id</code></td>
+					<td>Идентификатор тарифа</td>
+				</tr>
+				<tr>
+					<td><code>distance</code></td>
+					<td>Длина пути по таксометру в метрах</td>
+				</tr>
+				<tr>
+					<td><code>total_distance</code></td>
+					<td>Общая длина пути в метрах. <code>total_distance</code> &ge; <code>distance</code>.</td>
+				</tr>
+				<tr>
+					<td><code>slow_time</code></td>
+					<td>Общее время простоя (или медленного движения) в секундах.</td>
+				</tr>
+				<tr>
+					<td><code>total_time</code></td>
+					<td>Общее время движения в секундах. <code>total_time</code> &ge; <code>slow_time</code>.</td>
+				</tr>
+			</table>
+		</article>
+	</article>
+
+	<article>
+		<h1>Работа с очередями</h1>
+
+		<article class="command" id="service-checkpoints">
+			<h1>Сообщение <code>service-checkpoints</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				list: [<br>
+					<span class="tab">
+					{<br>
+						<span class="tab">
+						checkpoint_id: &lt;int&gt;,<br>
+						name: &lt;str&gt;,<br>
+						subqueues: [<br>
+							<span class="tab">
+							{<br>
+								<span class="tab">
+								checkpoint_id: &lt;int&gt;,<br>
+								name: &lt;str&gt;,<br>
+								subqueues: []</span><br>
+							},<br>
+							...</span><br>
+						]</span><br>
+					},<br>
+					...</span><br>
+				]</span><br>
+			}</code></p>
+
+			<p>Сообщение <code>service-checkpoints</code> передаёт приложению список очередей, доступных для водителя. Поле <code>list</code> содержит массив объектов <i>queue</i> с полями:</p>
+
+			<table>
+				<tr>
+					<td><code>checkpoint_id</code></td>
+					<td>Идентификатор очереди</td>
+				</tr>
+				<tr>
+					<td><code>name</code></td>
+					<td>Название очереди</td>
+				</tr>
+				<tr>
+					<td><code>subqueues</code></td>
+					<td>Список подчинённых очередей, также в виде объектов <i>queue</i></td>
+				</tr>
+			</table>
+
+			<p>Водитель может самостоятельно записываться только в очереди первого уровня.</p>
+
+			<p>Сообщение <code>service-checkpoints</code> высылается водителю при входе на сервер. Кроме того, это сообщение может высылаться в любой момент работы, когда список очередей и их параметры изменяются диспетчером.</p>
+		</article>
+
+		<article class="command" id="set-checkpoint">
+			<h1>Команда <code>set-checkpoint</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				checkpoint_id: &lt;int&gt;</span><br>
+			}</code></p>
+
+			<p>Команда <code>set-checkpoint</code> запрашивает сервер записать водителя в конец очереди <code>checkpoint_id</code>.</p>
+		</article>
+
+		<article class="command" id="checkpoint-set">
+			<h1>Сообщение <code>set-checkpoint</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				checkpoint_id: &lt;int&gt;</span><br>
+			}</code></p>
+
+			<p>Сообщение <code>queue-set</code> передаёт приложению идентификатор очереди, в которой записан водитель.</p>
+
+			<p class="problem">Это сообщение должно называться "checkpoint-set".</p>
+		</article>
+
+		<article class="command" id="update-queues">
+			<h1>Команда <code>update-queues</code></h1>
+
+			<p><code>data: null</code></p>
+
+			<p>Команда <code>update-queues</code> запрашивает сервер выслать свежие списки водителей, записанных в очередях, доступных пользователю.</p>
+		</article>
+
+		<article class="command" id="queues-update">
+			<h1>Сообщение <code>queues-update</code></h1>
+
+			<p>Сообщение <code>queues-update</code> передаёт приложению списки водителей, записанных в очередях, доступных для просмотра.</p>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				queues: [<br>
+					<span class="tab">
+					{<br>
+						<span class="tab">
+						checkpoint_id: &lt;int&gt;,<br>
+						drivers: [{call_id: &lt;string&gt;}, ...]</span><br>
+					},<br>
+					...</span><br>
+				]</span><br>
+			}</code></p>
+
+		</article>
+	</article>
+
+	<article id="chat">
+		<h1>Чат</h1>
+
+		<article class="command" id="get-chat-phrases">
+			<h1>Команда <code>get-chat-phrases</code></h1>
+
+			<p><code>data: null</code></p>
+
+			<p>Команда <code>get-chat-phrases</code> запрашивает сервер выслать список заготовленных фраз для водителя в виде сообщения <code>chat-phrases</code>.</p>
+		</article>
+
+		<article class="command" id="chat-phrases">
+			<h1>Сообщение <code>chat-phrases</code></h1>
+
+			<p><code>data: [&lt;str&gt;, ...]</code></p>
+
+			<p>Сообщение <code>chat-phrases</code> передаёт водителю список заготовленных фраз для чата.</p>
+		</article>
+
+		<article id="chat-addr" class="command">
+			<h1>Формат <code>chat-addr</code></h1>
+
+			<p><code>&lt;chat-addr&gt; = &lt;type&gt;:[&lt;call-id&gt;]</code></p>
+
+			<p>Формат <code>chat-addr</code> определяет вид адреса для одного адресата или класса адресатов в чате.</p>
+
+			<p>Обязательная часть <code>&lt;type&gt;</code>  может принимать значения <code>"dispatcher"</code> или <code>"driver"</code>.</p>
+
+			<p>Необязательная часть <code>&lt;call-id&gt;</code> содержит позывной диспетчера или водителя. Если позывной не указан, адресатами являются все диспетчеры или водители. Например, <code>"driver:z07"</code> определяет водителя с позывным «z07»; <code>"dispatcher:"</code> определяет всех диспетчеров.</p>
+		</article>
+
+		<article class="command" id="send-chat-message">
+			<h1>Команда <code>send-chat-message</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				text: &lt;str&gt;,<br>
+				to: &lt;chat-addr&gt;</span><br>
+			}</code></p>
+
+			<p>Команда <code>send-chat-message</code> запрашивает сервер переслать сообщение в поле <code>text</code> по адресу, указанному в поле <code>to</code>.</p>
+		</article>
+
+		<article class="command" id="chat-message">
+			<h1>Сообщение <code>chat-message</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				id: &lt;int&gt;,<br>
+				time: &lt;utc&gt;,<br>
+				text: &lt;str&gt;,<br>
+				from: &lt;chat-addr&gt;</span><br>
+			}</code></p>
+
+			<p>Сообщение <code>chat-message</code> передаёт водителю новое чат-сообщение.</p>
+
+			<table>
+				<tr>
+					<td><code>id</code></td>
+					<td>Идентификатор сообщения, увеличивающееся число.</td>
+				</tr>
+				<tr>
+					<td><code>time</code></td>
+					<td>Время сохранения сообщения на сервере, <span class="caps">UTC</span>, секунды.</td>
+				</tr>
+				<tr>
+					<td><code>text</code></td>
+					<td>Текст сообщения.</td>
+				</tr>
+				<tr>
+					<td><code>from</code></td>
+					<td>Адрес создателя сообщения.</td>
+				</tr>
+			</table>
+		</article>
+
+		<article class="command" id="get-chat-messages">
+			<h1>Команда <code>get-chat-messages</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				since: &lt;utc&gt;,<br>
+				until: &lt;utc&gt;</span><br>
+			}</code></p>
+
+			<p>Команда <code>get-chat-messages</code> запрашивает сервер выслать сообщения с временем создания начиная с <code>since</code> и заканчивая <code>until</code>. Поля <code>since</code> и <code>until</code> содержат <span class="caps">UTC</span>-время в секундах.</p>
+		</article>
+
+		<article class="command" id="chat-messages">
+			<h1>Сообщение <code>chat-messages</code></h1>
+
+			<p><code>data: [<br>
+				<span class="tab">
+				{<br>
+					<span class="tab">
+					id: &lt;int&gt;,<br>
+					time: &lt;utc&gt;,<br>
+					text: &lt;str&gt;,<br>
+					from: &lt;chat-addr&gt;</span><br>
+				},<br>
+				...</span><br>
+			]</code></p>
+		</article>
+	</article>
+
+	<article>
+		<h1>Сигнал тревоги</h1>
+
+		<article class="command" id="alarm">
+			<h1>Команда <code>alarm</code></h1>
+			<p><code>data: null</code></p>
+
+			<p>Команда <code>alarm</code> говорит серверу передать диспетчерам сигнал тревоги водителя.</p>
+		</article>
+
+		<article class="command" id="stop-alarm">
+			<h1>Команда <code>stop-alarm</code></h1>
+			<p><code>data: null</code></p>
+
+			<p>Команда <code>stop-alarm</code> говорит серверу отменить сигнал тревоги у диспетчеров.</p>
+
+			<p>Если не послать команду <code>stop-alarm</code>, то сервер отменит тревогу сам через некоторое время.</p>
+		</article>
+
+	</article>
+
+	<article id="brigades">
+		<h1>Отслеживание других водителей</h1>
+
+		<article class="command" id="driver-positions">
+			<h1>Сообщение <code>driver-positions</code></h1>
+			<p><code>data: [<br>
+				<span class="tab">
+				{<br>
+					<span class="tab">
+					id: &lt;int&gt;,<br>
+					call_id: &lt;string&gt;,<br>
+					latitude: &lt;double&gt;,<br>
+					longitude: &lt;double&gt;</span><br>
+				},<br>
+				...</span><br>
+			]</code></p>
+
+			<p>Сообщение <code>driver-positions</code> передаёт приложению информацию о водителях, которые сейчас на связи, в виде списка объектов.</p>
+
+			<table>
+				<caption>Поля объектов в списке</caption>
+				<tr>
+					<td><code>id</code></td>
+					<td>Уникальный идентификатор водителя</td>
+				</tr>
+				<tr>
+					<td><code>call_id</code></td>
+					<td>Позывной водителя (строка для отображения; может быть не уникальной)</td>
+				</tr>
+				<tr>
+					<td><code>latitude</code>, <code>longitude</code></td>
+					<td>Координаты водителя</td>
+				</tr>
+			</table>
+
+			<p>Сообщение <code>driver-positions</code> высылается один раз при входе на сервер. После этого приложение получает обновления в виде сообщений <code>driver-online</code>, <code>driver-offline</code> и <code>driver-position</code>.</p>
+
+			<p>Если сообщение <code>driver-positions</code> не пришло, то функция отслеживания водителей отключена для учётной записи приложения.</p>
+		</article>
+
+		<article class="command" id="driver-online">
+			<h1>Сообщение <code>driver-online</code></h1>
+
+			<p><code>data: {<br>
+				<span class="tab">
+				id: &lt;int&gt;,<br>
+				call_id: &lt;string&gt;</span><br>
+			}</code></p>
+
+			<p>Сообщение <code>driver-online</code> говорит, что водитель с идентификатором <var>id</var> подключился к серверу и имеет позывной <var>call_id</var>.</p>
+		</article>
+
+		<article class="command" id="driver-offline">
+			<h1>Сообщение <code>driver-offline</code></h1>
+			<p><code>data: {<br>
+				<span class="tab">
+				id: &lt;int&gt;</span><br>
+			}</code></p>
+
+			<p>Сообщение <code>driver-offline</code> говорит, что водитель с идентификатором <var>id</var> отключился от сервера.</p>
+		</article>
+
+		<article class="command" id="driver-position">
+			<h1>Сообщение <code>driver-position</code></h1>
+			<p><code>data: {<br>
+				<span class="tab">
+				id: &lt;int&gt;,<br>
+				latitude: &lt;double&gt;,<br>
+				longitude: &lt;double&gt;</span><br>
+			}</code></p>
+			<p>Сообщение <code>driver-position</code> передаёт новые координаты водителя с идентификатором <var>id</var>.</p>
+		</article>
+	</article>
+
+</article>
+
+<article>
+	<h1><span class="caps">HTTP</span>-интерфейс</h1>
+
+	<article id="http-format">
+		<h1>Формат</h1>
+
+		<p>Данные получаются по запросам к веб-серверу. Все адреса имеют общую часть, обозначенную <code>&lt;pref&gt;</code>. Например, если <code>&lt;pref&gt;="/foo/bar"</code>, то <code>GET &lt;pref&gt;/index.html</code> становится <code>GET /foo/bar/index.html</code>.</p>
+
+		<p>Почти каждый запрос требует параметра <code>t</code>, который должен содержать значение токена, выданного после авторизации:</p>
+
+		<code>GET &lt;pref&gt;/foobar?t=&lt;token&gt;</code>
+
+		<p>На каждый запрос возвращается единственный объект в формате <span class="caps">JSON</span>, в котором всегда присутствуют два стандартных поля <code>errno</code> и <code>errstr</code>:</p>
+
+		<p class="disp"><code>{<br>
+			<span class="tab">
+			errno: &lt;int&gt;,<br>
+			errstr: &lt;string&gt;,<br>
+			...</span><br>
+		}</code></p>
+
+		<p>В случае успешного запроса значение <code>errno</code> равно нулю, значение <code>errstr</code> &mdash; <code>"ok"</code>. В случае ошибки значение <code>errno</code> является положительным числом, а значение <code>errstr</code> &mdash; кратким описанием ошибки.</p>
+
+		<p>В ходе работы любой запрос может перестать возвращать обычные данные и начать возвращать ошибку (например, если водителя заблокировали).</p>
+	</article>
+
+	<article class="command" id="post-auth">
+		<h1>Запрос <code>auth</code></h1>
+
+		<p><code>POST &lt;pref&gt;/auth<br>
+			<span class="tab">
+			name=&lt;string&gt;<br>
+			password=&lt;string&gt;</span>
+			</code></p>
+
+		<p>Запрос <code>auth</code> авторизует водителя, создаёт на веб-сервере временный ключ («токен») для доступа к остальным запросам и возвращает его.</p>
+
+		<p>Поле запроса <code>name</code> содержит имя пользователя (логин), поле <code>password</code> &mdash; пароль.</p>
+
+		<p>Поле ответа <code>token</code> содержит временный ключ доступа.</p>
+
+		<p class="disp"><code>data: {<br>
+			<span class="tab">
+			token: &lt;string&gt;</span><br>
+		}</code></p>
+	</article>
+
+	<article class="command">
+		<h1>test</h1>
+
+		<p><code>GET &lt;pref&gt;/test?t=&lt;token&gt;</code></p>
+
+		<p>Возвращает пустой ответ (то есть, ответ, содержащий только поля &laquo;errno&raquo; и &laquo;errstr&raquo;).</p>
+	</article>
+
+	<article id="orders-pool" class="command" id="get-orders-pool">
+		<h1>Запрос <code>orders-pool</code></h1>
+
+		<p class="proto"><code>GET &lt;pref&gt;/orders-pool?t=&lt;token&gt;</code></p>
+
+		<p>Возвращает заказы, опубликованные в &laquo;эфире заказов&raquo;.</p>
+
+		<p class="example"><code>{<br>
+			<span class="tab">"list": [ &lt;order&gt;, &lt;order&gt;, ...],<br>
+			"errno": 0,<br>
+			"errstr": "ok"</span><br>
+		}</code></p>
+
+		<p>Каждый объект &lt;order&gt; имеет формат:</p>
+
+		<p class="example"><code>{<br>
+			<span class="tab">order_id: &lt;int&gt;,<br>
+			status: &lt;string&gt;,<br>
+			latitude: &lt;double&gt;,<br>
+			longitude: &lt;double&gt;,<br>
+			from_address: &lt;string&gt;,<br>
+			to_address: &lt;string&gt;,<br>
+			comments: &lt;string&gt;,<br>
+			customer_phone: &lt;string&gt;,<br>
+			customer_name: &lt;string&gt;,<br>
+			assignment_time: &lt;utc&gt; / null,<br>
+			arrival_time: &lt;utc&gt; / null</span><br>
+		}</code></p>
+
+		<p>Значения <code>&lt;utc&gt;</code> &mdash; целые числа, &laquo;Unix time&raquo; (секунды в UTC), или <code>null</code>.</p>
+
+		<table>
+			<caption>Поля объекта <i>order</i></caption>
+			<tr>
+				<td><code>order_id</code></td>
+				<td>Идентификатор заказа</td>
+			</tr>
+			<tr>
+				<td><code>status</code></td>
+				<td>Состояние заказа &mdash; <code>"waiting"</code> (заказ с таймером на принятие) или <code>"postponed"</code> (отложен на потом).</td>
+			</tr>
+			<tr>
+				<td><code>latitude</code>, <code>longitude</code></td>
+				<td>Координаты клиента</td>
+			</tr>
+			<tr>
+				<td><code>from_address</code></td>
+				<td>Адрес клиента</td>
+			</tr>
+			<tr>
+				<td><code>to_address</code></td>
+				<td>Адрес места назначения</td>
+			</tr>
+			<tr>
+				<td><code>comments</code></td>
+				<td>Комментарии</td>
+			</tr>
+			<tr>
+				<td><code>customer_phone</code></td>
+				<td>Номер телефона клиента в формате <code>"+375121234567"</code>.</td>
+			</tr>
+			<tr>
+				<td><code>customer_name</code></td>
+				<td>Имя клиента</td>
+			</tr>
+			<tr>
+				<td><code>assignment_time</code></td>
+				<td>Время, к которому заказ должен быть принят или закрыт как непринятый. Если это значение дано, то приложение может отобразить обратный счётчик, показывая, что время на принятие этого заказа ограничено.</td>
+			</tr>
+			<tr>
+				<td><code>arrival_time</code></td>
+				<td>Время, когда водитель должен <em>прибыть на место</em>. Если это время дано, то заказ считается &laquo;отложенным&raquo;. Он может быть отложен, например, на несколько часов.</td>
+			</tr>
+		</table>
+
+		<p>Любые поля, в том числе времена, могут изменяться диспетчером после публикации. Если для отложенного заказа дано время принятия (оно может появиться, например, когда диспетчер решит запустить заказ вручную), то можно его считать обычным заказом.</p>
+	</article>
+
+	<article class="command" id="get-balance">
+		<h1>Запрос <code>balance</code></h1>
+
+		<p><code>GET &lt;pref&gt;/balance?t=&lt;token&gt;</code></p>
+
+		<p class="disp"><code>data: {<br>
+			<span class="tab">
+			total: &lt;int&gt;</span><br>
+		}</code></p>
+
+		<p>Запрос <code>balance</code> возвращает количество денег на счёте водителя.</p>
+
+		<p>Поле <code>total</code> содержит сумму в рублях.</p>
+	</article>
+</article>
+
+
+
+
+<script src="toc.js"></script>
+
+</body>
+</html>

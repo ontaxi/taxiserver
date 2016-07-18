@@ -1,0 +1,92 @@
+/*
+ * An order block.
+ */
+#orders-widget .order {
+	padding: 0.5em;
+	margin-bottom: 4px;
+	color: white;
+	cursor: pointer;
+	overflow: auto;
+	transition: background-color 1s;
+	font-size: 10pt;
+	border-radius: 2px;
+}
+
+#orders-widget .postponed .list:before {
+	content: "Отложенные";
+}
+
+#orders-widget > .current .list:before {
+	content: "Текущие";
+}
+
+#orders-widget > .closed .list:before {
+	content: "Закрытые";
+}
+
+#orders-widget .list:empty:before {
+	content: "";
+}
+
+#orders-widget .current .order {
+	background-color: white;
+	color: #333;
+}
+
+#orders-widget .closed .order {
+	background-color: #aaa;
+}
+
+/*
+ * Cancel button inside an order block.
+ */
+#orders-widget .order .cancel {
+	background-color: #ccc;
+	padding: 0.2em 0.5em;
+	border-radius: 2px;
+	float: right;
+	font-size: 9pt;
+	color: #666;
+}
+
+#orders-widget .order .time:after {
+	content: ",";
+}
+
+#orders-widget .order .address {
+	display: inline-block;
+	width: 200px;
+	vertical-align: text-top;
+}
+
+#orders-widget .order .comments {
+	font-style: italic;
+}
+
+#orders-widget .order .status {
+	color: #DCECF8;
+}
+
+#orders-widget a[href] {
+	color: inherit;
+}
+
+#orders-widget .current .order .status {
+	color: #758984;
+}
+
+#orders-widget .order.expired {
+	background-color: #600;
+}
+
+#orders-widget .order.urgent {
+	background-color: #fc1a1a;
+}
+
+#orders-widget .order.soon {
+	background-color: #fc6d1a;
+}
+
+#orders-widget .order.far {
+	background-color: #77aa66;
+}

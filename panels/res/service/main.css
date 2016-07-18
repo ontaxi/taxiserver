@@ -1,0 +1,188 @@
+input[size="3"] {
+	width: 6em;
+}
+
+#settings-table td:first-child {
+	max-width: 33em;
+}
+
+#settings-table th {
+	text-align: left;
+	padding: 0.4em 0.5em;
+	border: thin solid #aaa;
+	border-width: 0 0 1px 1px;
+	background-color: #9ab;
+}
+
+#settings-table {
+	border-spacing: 0;
+	border: thin solid #aaa;
+	border-width: 1px 1px 0 0;
+}
+
+#settings-table td {
+	padding: 0.2em 0.5em;
+	border: thin solid #aaa;
+	border-width: 0 0 1px 1px;
+}
+
+
+#map {
+	height: 400px;
+	min-width: 400px;
+	border: thin solid gray;
+}
+
+.columns > .stdcol {
+	width: 400px;
+}
+
+.w-tabs-bodies {
+	background-color: #fafafa;
+	padding: 1em;
+}
+
+.w-tabs-page h1 {
+	display: none;
+}
+
+.w-tabs-heads {
+	margin: 0;
+}
+
+.w-tabs-head, .w-tabs-head.current {
+	padding: 0.2em 0.5em;
+	cursor: default;
+	background-color: #ccc;
+}
+
+.w-tabs-head {
+	border-right: 1px solid #aaa;
+	border-top-right-radius: 8px;
+	text-decoration: none;
+	color: black;
+	border-bottom: none;
+}
+
+.w-tabs-head:hover {
+	background-color: #ddd;
+	cursor: pointer;
+}
+
+.w-tabs-head.current {
+	background-color: #fafafa;
+	color: black;
+}
+
+fieldset .legend {
+	font-weight: bold;
+}
+
+fieldset + fieldset {
+	margin-top: -1px;
+}
+
+.ui-required-mark {
+	display: inline;
+	margin-left: 0.3em;
+}
+.ui-required-mark:after {
+	content: "*";
+	font-weight: bold;
+	color: red;
+}
+
+table a.delete, table a.edit {
+	display: inline-block;
+	background-size: cover;
+	width: 1.5em;
+	height: 1.5em;
+	text-indent: -99999px;
+	outline: none;
+}
+
+table a.delete {
+	background-image: url("images/delete.svg");
+}
+
+table a.edit {
+	background-image: url("images/edit.svg");
+}
+
+
+a.create {
+	margin-bottom: 0.5em;
+}
+
+a.create:before {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	background: url("images/add.svg") no-repeat center/10px;
+	margin-right: 0.4em;
+	content: "";
+}
+
+
+body > header {
+	margin-top: 2em;
+}
+
+body > header nav {
+	width: 12em;
+	left: 0;
+	margin-top: 2em;
+	position: fixed;
+	top: 0;
+	z-index: 1001; /* Leaflet's zoom control has 1000. */
+}
+
+body > header nav {
+	border-bottom: solid 1px #ccc;
+}
+
+body > header nav h1 {
+	font-size: 0.8em;
+	margin: 0;
+	padding: .5em .7em;
+	background-color: #9ab;
+}
+
+body > header nav ul
+{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+body > header nav ul li{
+	position: relative;
+}
+body > header nav ul ul
+{
+	position: absolute;
+	left: 100%;
+	top: 0;
+	visibility: hidden;
+}
+body > header nav ul, body > header nav h1 {
+	box-shadow: .1em .2em .3em #999;
+}
+
+body > header nav li:hover ul {
+	visibility: visible;
+}
+body > header nav a
+{
+	display: block;
+	border: solid 1px #ccc;
+	border-bottom-width: 0;
+	padding: .7em;
+	text-decoration: none;
+	background-color: #f6f6f6;
+	color: black;
+	background-repeat: no-repeat;
+	min-width: 7em;
+}
+body > header nav a:hover{
+	background-color: white;
+}

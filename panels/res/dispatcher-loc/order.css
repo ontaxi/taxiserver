@@ -1,0 +1,376 @@
+.emulation-datetime-local {
+	display: inline-block;
+	background-color: white;
+	border: thin solid #aaa;
+	padding: 0.1em;
+}
+.emulation-datetime-local input {
+	border: none !important;
+	width: 1.5em !important;
+	text-align: center;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+.emulation-datetime-local input.year {
+	width: 3em !important;
+}
+.w-layer {
+	background: white;
+	background-image: linear-gradient(to bottom, white, #fafafa);
+	border-radius: 3px;
+	border: 1px solid #e5e5e5;
+	box-shadow: 0px 4px 10px -1px rgba(200, 200, 200, 0.7);
+	padding: 1em;
+
+	opacity: 0.8;
+	transition-property: opacity;
+	transition-duration: 0.5s;
+	z-index: 1;
+}
+
+.w-layer.focus {
+	opacity: 1.0;
+	transition-duration: 0s;
+	z-index: 2;
+	cursor: grab;
+}
+
+.w-layer.dragging {
+	cursor: grabbing;
+}
+
+.w-dialog .content {
+	margin-bottom: 1em;
+}
+
+.w-toast {
+	background-color: black;
+	border-radius: 4px;
+	color: white;
+	font-weight: bold;
+	padding: 0.5em 1em;
+	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+
+#order-button {
+	font-size: larger;
+	min-width: 6em;
+	margin: 1em 0;
+}
+
+#order-button.active {
+	background-color: #74C8EF;
+}
+
+#orders-widget > div {
+	display: inline-block;
+	width: 32%;
+	vertical-align: top;
+}
+
+.queues-table {
+	border-spacing: 0;
+	border-top: thin solid #bbb;
+	border-left: thin solid #bbb;
+	width: 1205px;
+	margin-top: 5px;
+}
+
+.queues-table.dragging td + td.hover {
+	background-color: powderblue;
+}
+
+.queues-table.dragging {
+	cursor: grabbing;
+}
+
+.queues-table td {
+	padding: 0;
+	border-color: black;
+	border-bottom: 1px solid black;
+	border-right: 1px solid black;
+	height: 20px;
+	width: 50px;
+	text-align: center;
+}
+
+.queues-table th {
+	background-color: #f6f6f6;
+	padding: 6px;
+	border-bottom: 1px solid black;
+}
+
+.queues-table .queue-head {
+	width: 180px;
+	padding-left: 2px;
+	font-weight: bold;
+	text-align: left;
+	cursor: pointer;
+}
+
+.queues-table .number {
+	float: right;
+	font-size: 10px;
+	margin: 3px 2px 1px 0;
+	display: block;
+	width: 20px;
+	text-align: right;
+}
+
+.queues-table .subqueue .queue-head {
+	padding-left: 16px;
+}
+
+.queues-table .queue-head {
+	position: relative;
+}
+.queues-table .priority {
+	font-size: 9px;
+	position: absolute;
+	right: 3em;
+	top: 6px;
+	display: block;
+	width: 2em;
+	text-align: center;
+	font-family: serif;
+}
+
+.queues-table span {
+	cursor: pointer;
+	margin-right: 0;
+	padding: 0;
+	font-weight: bolder;
+}
+
+.queues-table .car {
+	display: block;
+	cursor: pointer;
+	width: 50px;
+	height: 20px;
+	padding: 0;
+}
+
+.queues-table .sedan {
+	background-position: 0 -0px;
+}
+
+.queues-table .hatchback {
+	background-position: 0 -20px;
+}
+
+.queues-table .estate {
+	background-position: 0 -40px;
+}
+
+.queues-table .minivan {
+	background-position: 0 -60px;
+}
+
+.queues-table .bus {
+	background-position: 0 -80px;
+}
+
+
+
+.queues-table .car {
+	background-image: url("images/car-icons-ok.png");
+}
+.queues-table .car.away {
+	background-image: url("images/car-icons-away.png");
+}
+.queues-table .car.busy {
+	background-image: url("images/car-icons-busy.png");
+}
+.queues-table .car.fake {
+	background-image: url("images/car-icons-fake.png");
+}
+
+.queues-table .offline {
+	opacity: 0.4;
+}
+
+/*
+ * A car selected by a filter in the table.
+ */
+.queues-table .highlight {
+	background-color: #063;
+}
+
+/*
+ * A car selected by the taxi_id input of an order form.
+ */
+.queues-table .selected {
+	outline: 4px solid #f66;
+}
+
+.queues-table tr {
+	transition: background-color 0.5s;
+}
+
+.queues-table tr.forbidden {
+	background-color: #c66;
+}
+
+/*
+ * Important car position.
+ */
+.queues-table td.req {
+	background-color: #DDE2F6;
+}
+
+.queues-table tr.forbidden td {
+	background-color: transparent;
+}
+
+.queues-table.dragging tr:not(.forbidden) td:hover:not(.queue-head) {
+	background-color: #9bf3ea;
+}
+
+.order-form {
+	width: 392px;
+}
+
+.order-form label {
+	display: inline-block;
+	width: 9em;
+	vertical-align: top;
+	margin-top: 6px;
+}
+
+.order-form label.inline {
+	display: inline;
+}
+
+.order-form input.wait {
+	background-image: url("images/input-waiting.gif");
+	background-size: 100%;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.order-form input,
+.order-form textarea {
+	width: 190px;
+}
+
+.order-form input[type="radio"],
+.order-form input[type="checkbox"] {
+	width: auto;
+}
+
+.order-form input.house,
+.order-form input.building,
+.order-form input.entrance,
+.order-form input.apartment {
+	width: 50px;
+}
+
+.order-form .history {
+	background-image: url("images/list.svg");
+	background-size: 18px 18px;
+	background-repeat: no-repeat;
+	background-position: center;
+	text-indent: -99999px;
+	overflow: hidden;
+}
+
+.order-form .driver,
+.order-form .queue-loc,
+.order-form .loc,
+.order-form .dest-section input,
+.order-form .dest-section select {
+	font-weight: bold;
+}
+/*
+ * An order block.
+ */
+#orders-widget .order {
+	padding: 0.5em;
+	margin-bottom: 4px;
+	color: white;
+	cursor: pointer;
+	overflow: auto;
+	transition: background-color 1s;
+	font-size: 10pt;
+	border-radius: 2px;
+}
+
+#orders-widget .postponed .list:before {
+	content: "Отложенные";
+}
+
+#orders-widget > .current .list:before {
+	content: "Текущие";
+}
+
+#orders-widget > .closed .list:before {
+	content: "Закрытые";
+}
+
+#orders-widget .list:empty:before {
+	content: "";
+}
+
+#orders-widget .current .order {
+	background-color: white;
+	color: #333;
+}
+
+#orders-widget .closed .order {
+	background-color: #aaa;
+}
+
+/*
+ * Cancel button inside an order block.
+ */
+#orders-widget .order .cancel {
+	background-color: #ccc;
+	padding: 0.2em 0.5em;
+	border-radius: 2px;
+	float: right;
+	font-size: 9pt;
+	color: #666;
+}
+
+#orders-widget .order .time:after {
+	content: ",";
+}
+
+#orders-widget .order .address {
+	display: inline-block;
+	width: 200px;
+	vertical-align: text-top;
+}
+
+#orders-widget .order .comments {
+	font-style: italic;
+}
+
+#orders-widget .order .status {
+	color: #DCECF8;
+}
+
+#orders-widget a[href] {
+	color: inherit;
+}
+
+#orders-widget .current .order .status {
+	color: #758984;
+}
+
+#orders-widget .order.expired {
+	background-color: #600;
+}
+
+#orders-widget .order.urgent {
+	background-color: #fc1a1a;
+}
+
+#orders-widget .order.soon {
+	background-color: #fc6d1a;
+}
+
+#orders-widget .order.far {
+	background-color: #77aa66;
+}

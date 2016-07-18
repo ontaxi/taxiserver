@@ -1,0 +1,7 @@
+#map-widget .map {
+	position: absolute !important /* Leaflet again */;
+	left: 7px;
+	right: 7px;
+	top: 40px;
+	bottom: 7px;
+}

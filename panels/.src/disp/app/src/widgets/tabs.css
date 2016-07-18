@@ -1,0 +1,28 @@
+<?php
+$border_gray = '#bbb';
+$gray3 = '#dadde6';
+$face_white = '#f9f9f9';
+?>
+.w-tabs-head {
+	display: inline-block;
+	border-right: thin solid <?= $border_gray ?>;
+	padding: 0.2em 0.5em;
+	cursor: pointer;
+	border-radius: 0 9px 0 0;
+	background-color: <?= $border_gray ?>;
+}
+
+.w-tabs-head:hover {
+	background-color: <?= $gray3 ?>;
+}
+
+.w-tabs-head.current {
+	padding: 0.2em 0.5em;
+	background-color: <?= $face_white ?>;
+	color: black;
+}
+
+.w-tabs-bodies {
+	background-color: <?= $face_white ?>;
+	padding: 0.5em;
+}

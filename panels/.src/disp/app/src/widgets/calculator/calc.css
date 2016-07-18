@@ -1,0 +1,31 @@
+#calc-widget .controls {
+	width: 260px;
+}
+
+#calc-widget .map {
+	position: absolute !important /* Leaflet again */;
+	left: 270px;
+	top: 7px;
+	right: 7px;
+	bottom: 7px;
+}
+
+#calc-widget .house,
+#calc-widget .building {
+	width: 3em;
+}
+
+#calc-widget .address-picker {
+	margin-bottom: 0.5em;
+}
+
+#calc-widget label {
+	display: inline-block;
+	width: 6em;
+}
+
+#calc-widget .output {
+	margin: 1em;
+	padding: 0.5em;
+	border: 1px dashed #AD9898;
+}

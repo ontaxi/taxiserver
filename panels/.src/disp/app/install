@@ -1,0 +1,19 @@
+#!/bin/sh
+
+dest=../../../res/dispatcher
+
+
+# build the stylesheet
+find lib src -name "*.css" | xargs cat src/main.css.php > tmp.php
+php tmp.php > $dest/order.css
+rm tmp.php
+
+# refresh the core
+(cd ../core/ && ./build.sh)
+cp ../core/disp-core.js lib/disp-core.js
+
+# build the order script
+jscat -d lib src > $dest/order.js
+
+# refresh the images
+rsync -rui images/ $dest/images

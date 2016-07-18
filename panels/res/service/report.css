@@ -1,0 +1,65 @@
+body {
+	font-size: 10pt;
+	font-family: sans-serif;
+	background: white;
+}
+
+h1 {
+	font-size: 1.5em;
+	text-align: center;
+}
+
+form {
+	max-width: 60em;
+	margin: auto;
+}
+
+table {
+	border-spacing: 0;
+	border-style: solid;
+	border-color: gray;
+	border-width: 1px 1px 0 0;
+	margin: 2em auto;
+}
+
+td, th {
+	border-style: solid;
+	border-color: gray;
+	border-width: 0 0 1px 1px;
+	padding: 0.2em 0.5em;
+	text-align: left;
+}
+
+tr:nth-child(odd) td {
+	background-color: #fafafc;
+}
+
+#map {
+	height: 400px;
+}
+
+.emulation-datetime-local {
+	display: inline-block;
+	background-color: white;
+	border: thin solid #aaa;
+	padding: 0.1em;
+}
+.emulation-datetime-local input {
+	border: none !important;
+	width: 1.5em !important;
+	text-align: center;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+.emulation-datetime-local input.year {
+	width: 3em !important;
+}
+
+@media print {
+	form {
+		display: none;
+	}
+	h1 {
+		text-align: left;
+	}
+}

@@ -1,0 +1,315 @@
+html {
+	background: #f0f0f0;
+}
+
+body {
+	padding: 2cm 4cm 1cm 3.6cm;
+	font-family: sans-serif;
+	font-size: 11pt;
+	color: #222;
+	line-height: 1.3em;
+	width: 36em;
+	margin: auto;
+	background: white;
+}
+
+body.draft:before {
+	position: fixed;
+	content: "Черновик";
+	font-size: 20pt;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	font-weight: bold;
+	color: #ccc;
+	opacity: 0.5;
+	right: 5em;
+	bottom: 1cm;
+	text-align: center;
+}
+
+var, i {
+	font-family: serif;
+}
+
+.strike {
+	text-decoration: line-through;
+}
+
+
+h1 {
+	font-size: 12pt;
+}
+
+h2, h3 {
+	font-size: 11pt;
+}
+
+article {
+	margin-bottom: 3em;
+}
+
+code {
+	font-size: 10pt;
+}
+
+p + p {
+	margin: 1.3em 0;
+}
+
+article article h1 {
+	font-size: 10pt;
+}
+
+article section h1 {
+	font-size: 10pt;
+}
+
+table {
+	min-width: 50%;
+	margin: 1em 0 2em;
+	border-spacing: 0;
+}
+
+table caption {
+	font-size: 10pt;
+	font-weight: bold;
+	text-align: left;
+	margin-bottom: 0.5em;
+}
+
+td {
+	padding: 0 0.5em 0.2em;
+	vertical-align: top;
+}
+
+th {
+	text-align: left;
+}
+
+td:first-child {
+	padding-left: 0;
+}
+
+table.dl {
+	min-width: auto;
+}
+
+table.dl td:first-child {
+	font-weight: bolder;
+	font-size: 10pt;
+	max-width: 12em;
+}
+
+
+.tab {
+	display: inline-block;
+	margin-left: 2em;
+}
+
+dt {
+	font-weight: bolder;
+	font-size: 90%;
+}
+
+dd {
+	margin-left: 1.5em;
+	margin-bottom: 0.5em;
+	display: inline;
+	display: block;
+}
+
+dd + dt {
+	margin-top: 0.5em;
+}
+
+ul, ol {
+	padding: 0;
+	margin-left: 1.5em;
+}
+
+.math {
+	font-family: cambria math;
+}
+
+.caps, abbr {
+	font-size: 90%;
+}
+
+
+.command {
+	margin: 3em 0 1em;
+}
+
+.command > h1 {
+	font-size: 10pt;
+}
+.command > h1:before {
+	/*content: "\2022"; */
+	content: "";
+	width: 0.5em;
+	height: 0.5em;
+	display: inline-block;
+	background: #0af;
+	border-radius: 1px;
+	margin-right: 0.5em;
+}
+
+nav :link, nav :visited {
+	color: #03a;
+}
+
+/*
+ * "Display" block for equations, code examples and other things
+ * like that.
+ */
+p.disp {
+	margin-left: 2em;
+}
+
+.toc {
+	margin: 0 0 4em;
+}
+.toc > ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.comment {
+	font-size: smaller;
+	margin-top: -1em;
+	border-left: 0.2em dotted silver;
+	padding-left: 1em;
+}
+
+.problem:before {
+	content: "\26a0";
+	margin-right: .5em;
+}
+.problem {
+	font-size: smaller;
+}
+.item + .problem {
+	margin-top: -0.5em;
+	margin-bottom: 2em;
+}
+.item.done:after {
+	content: "\2713";
+	display: block;
+	position: absolute;
+	left: -2.5em;
+	top: 0em;
+}
+.item.not-done {
+	color: #c00;
+}
+
+
+/*
+ * Algorithms.
+ */
+.alg, .alg ol {
+	list-style-position: inside;
+}
+.alg li {
+	list-style-type: disc;
+}
+.alg li.if {
+	list-style-type: none;
+}
+
+body {
+	counter-reset: item;
+}
+
+.item {
+	position: relative;
+	counter-increment: item;
+	margin-bottom: 2em;
+}
+
+.item p + ul, .item p + ol {
+	margin-top: -1em;
+	list-style-position: inside;
+	margin-left: 0;
+	padding-left: 0;
+}
+
+.item:before {
+	content: counter(item);
+	position: absolute;
+	left: -4em;
+	margin: 0;
+	width: 3em;
+	text-align: right;
+	font-size: smaller;
+}
+
+.item .ref, .item .date {
+	font-size: 8pt;
+	margin-top: 0;
+	margin-bottom: 0;
+	line-height: 12pt;
+	color: gray;
+	font-style: italic;
+	display: none;
+}
+
+body.draft .item .ref, body.draft .item .date {
+	display: block;
+}
+
+@media print {
+	nav {
+		display: none;
+	}
+	.item .date {
+		display: none;
+	}
+	math {
+		font-family: "Cambria math";
+	}
+}
+
+a.footnote {
+	color: inherit;
+	text-decoration: inherit;
+
+}
+
+a.footnote:after {
+	content: counter(fncount);
+	counter-increment: fncount;
+	font-size: 8pt;
+	position: relative;
+	bottom: 0.5em;
+}
+
+p.footnote {
+	font-size: 9pt;
+	position: relative;
+}
+p.footnote:before {
+	content: counter(fncountf);
+	counter-increment: fncountf;
+	font-size: 8pt;
+	position: relative;
+	bottom: 0.5em;
+	margin-right: 0.2em;
+}
+p.footnote:after {
+	content: "";
+	border-top: thin solid #222;
+	width: 20em;
+	height: 2px;
+	position: absolute;
+	left: 0;
+	top: -1.5em;
+	margin-top: 1em;
+}
+p.footnote + p.footnote {
+	margin-top: 0;
+}
+p.footnote + p.footnote:after {
+	display: none;
+}

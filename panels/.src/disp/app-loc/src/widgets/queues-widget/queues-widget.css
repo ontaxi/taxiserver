@@ -1,0 +1,156 @@
+<?php
+$CAR_ICON_WIDTH = 50;
+$CAR_ICON_HEIGHT = 20;
+$TABLE_CARS_NUMBER = 20;
+$high_blue = 'powderblue';
+$high_red = '#f66';
+$back_red = '#c66';
+$border_gray = '#bbb';
+$face_gray = '#f6f6f6';
+?>
+
+.queues-table {
+	border-spacing: 0;
+	border-top: thin solid <?= $border_gray ?>;
+	border-left: thin solid <?= $border_gray ?>;
+	width: <?= (5 + 180 + $TABLE_CARS_NUMBER*($CAR_ICON_WIDTH + 1) ) ?>px;
+	margin-top: 5px;
+}
+
+.queues-table.dragging td + td.hover {
+	background-color: <?= $high_blue ?>;
+}
+
+.queues-table.dragging {
+	cursor: grabbing;
+}
+
+.queues-table td {
+	padding: 0;
+	border-color: black;
+	border-bottom: 1px solid black;
+	border-right: 1px solid black;
+	height: 20px;
+	width: <?= $CAR_ICON_WIDTH ?>px;
+	text-align: center;
+}
+
+.queues-table th {
+	background-color: <?= $face_gray ?>;
+	padding: 6px;
+	border-bottom: 1px solid black;
+}
+
+.queues-table .queue-head {
+	width: 180px;
+	padding-left: 2px;
+	font-weight: bold;
+	text-align: left;
+	cursor: pointer;
+}
+
+.queues-table .number {
+	float: right;
+	font-size: 10px;
+	margin: 3px 2px 1px 0;
+	display: block;
+	width: 20px;
+	text-align: right;
+}
+
+.queues-table .subqueue .queue-head {
+	padding-left: 16px;
+}
+
+.queues-table .queue-head {
+	position: relative;
+}
+.queues-table .priority {
+	font-size: 9px;
+	position: absolute;
+	right: 3em;
+	top: 6px;
+	display: block;
+	width: 2em;
+	text-align: center;
+	font-family: serif;
+}
+
+.queues-table span {
+	cursor: pointer;
+	margin-right: 0;
+	padding: 0;
+	font-weight: bolder;
+}
+
+.queues-table .car {
+	display: block;
+	cursor: pointer;
+	width: <?= $CAR_ICON_WIDTH ?>px;
+	height: <?= $CAR_ICON_HEIGHT ?>px;
+	padding: 0;
+}
+
+<?php
+$types = array( "sedan", "hatchback", "estate", "minivan", "bus" );
+foreach( $types as $i => $type ): ?>
+.queues-table .<?= $type ?> {
+	background-position: 0 -<?= ($CAR_ICON_HEIGHT * $i) ?>px;
+}
+
+<?php endforeach; ?>
+
+
+.queues-table .car {
+	background-image: url("images/car-icons-ok.png");
+}
+.queues-table .car.away {
+	background-image: url("images/car-icons-away.png");
+}
+.queues-table .car.busy {
+	background-image: url("images/car-icons-busy.png");
+}
+.queues-table .car.fake {
+	background-image: url("images/car-icons-fake.png");
+}
+
+.queues-table .offline {
+	opacity: 0.4;
+}
+
+/*
+ * A car selected by a filter in the table.
+ */
+.queues-table .highlight {
+	background-color: #063;
+}
+
+/*
+ * A car selected by the taxi_id input of an order form.
+ */
+.queues-table .selected {
+	outline: 4px solid <?= $high_red ?>;
+}
+
+.queues-table tr {
+	transition: background-color 0.5s;
+}
+
+.queues-table tr.forbidden {
+	background-color: <?= $back_red ?>;
+}
+
+/*
+ * Important car position.
+ */
+.queues-table td.req {
+	background-color: #DDE2F6;
+}
+
+.queues-table tr.forbidden td {
+	background-color: transparent;
+}
+
+.queues-table.dragging tr:not(.forbidden) td:hover:not(.queue-head) {
+	background-color: #9bf3ea;
+}

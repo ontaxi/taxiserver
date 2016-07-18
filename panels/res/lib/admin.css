@@ -1,0 +1,348 @@
+﻿/*
+ * Text
+ */
+body {
+	background-color: #eee;
+	padding-bottom: 1cm;
+	overflow-y: scroll;
+	color: #333;
+	font-family: sans-serif;
+	font-size: 14px;
+}
+
+h1 { font-size: 14pt; }
+h2 { font-size: 12pt; }
+
+table {
+	margin: 1em 0;
+}
+
+table caption {
+	text-align: left;
+	font-weight: bold;
+}
+
+ul, ol {
+	padding: 0;
+	margin: 1em 0;
+	list-style-position: inside;
+}
+
+/*
+ * Forms
+ */
+
+input, textarea, button, select {
+	font-family: sans-serif;
+	font-size: 14px;
+	border: 1px solid #DFDFDF;
+	border-radius: 2px;
+	padding: 4px;
+}
+
+form :focus {
+	border-color: #7979C0;
+}
+
+button, .button {
+	background-color: #21759B;
+	display: inline-block;
+	border-radius: 3px;
+	color: white;
+	border: 1px solid #298CBA;
+	padding: 3px 10px;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+button:hover, .button:hover {
+	background-color: #3286AC;
+}
+
+button[disabled], button[disabled]:hover {
+	background-color: #ccc;
+	border-color: #bbb;
+	cursor: initial;
+}
+
+input[type=checkbox],
+input[size] {
+	width: auto;
+}
+
+input[type="number"][size="2"] {
+	width: 4em;
+}
+input[type="number"][size="3"] {
+	width: 6em;
+}
+input[type="number"][size="4"] {
+	width: 8em;
+}
+
+input[readonly] {
+	background-color: #eee;
+	border-width: 0;
+}
+
+form div {
+	margin-bottom: 0.6em;
+}
+
+div label {
+	display: block;
+}
+
+div input[type="checkbox"] + label,
+input[type="radio"] + label,
+div label.inline {
+	display: inline-block;
+	width: auto;
+}
+
+
+fieldset {
+	border: thin solid #ccc;
+}
+
+legend {
+	font-weight: bold;
+}
+
+
+.disabled label {
+	color: gray;
+}
+
+.warning {
+	color: red;
+}
+
+p.error {
+	color: red;
+	border: thin solid #f99;
+	padding: 0.5em;
+	max-width: 20em;
+}
+p.notice {
+	max-width: 20em;
+	color: #339;
+	padding: 0.5em;
+	border: thin solid #aaf;
+}
+
+#content {
+	margin-left: 15em;
+}
+
+table.items {
+	border-spacing: 0;
+	font-size: 10pt;
+	border: thin solid #aaa;
+}
+
+table.items thead {
+	background-color: #f6f6f6;
+}
+
+table.items tfoot {
+	background-color: #ccc;
+}
+
+table.items td, table.items th {
+	padding: .8em 1.2em;
+	border-bottom: solid 1px #aaa;
+	text-align: left;
+}
+
+a.delete {
+	color: red;
+	font-size: smaller;
+}
+
+button.delete {
+	opacity: 0.9;
+	font-size: 8pt;
+	padding: .2em;
+}
+
+button.delete:hover {
+	color: #c00;
+	opacity: 1;
+}
+
+.create {
+	border: 1px solid #999;
+	color: #686868;
+	display: inline-block;
+	font-style: italic;
+	font-weight: normal;
+	margin: 0.5em 0 2em;
+	padding: 0.5em;
+	text-decoration: none;
+	max-width: 20em;
+	cursor: pointer;
+}
+
+.create:hover {
+	background-color: #fbfbfd;
+	color: black;
+}
+
+nav.pages a {
+	margin-left: 0.5em;
+}
+
+h1.service-name {
+	font-size: 11pt;
+	color: #123;
+	background-color: #9ab;
+	padding: 0.2em;
+}
+
+.autocomplete {
+	z-index: 1;
+}
+.autocomplete ul {
+	margin: 0;
+	padding: 0;
+}
+.autocomplete li {
+	list-style-type: none;
+	background: white;
+	padding: 0.3em 0.5em;
+	cursor: pointer;
+}
+/*.autocomplete li:hover,*/
+.autocomplete li.selected {
+	background: #eee;
+}
+
+.columns {
+	display: table;
+	width: 100%;
+}
+
+.columns.compact {
+	width: auto;
+}
+
+.columns > div {
+	display: table-cell;
+	vertical-align: top;
+	padding-right: 1em;
+}
+
+.dialog {
+	background-color: #f0f0f0;
+	box-shadow: 3px 3px 3px #aaa;
+	padding: 1em;
+	max-width: 30em;
+	border: 1px solid #bbb;
+}
+
+.dialog.focus {
+	background-color: #f6f6f6;
+	z-index: 2;
+}
+
+.dialog * {
+	opacity: 0.8;
+}
+
+.dialog.focus * {
+	opacity: 1.0;
+}
+
+.dialog .title {
+	font-size: 11px;
+}
+
+.dialog .content {
+	margin-bottom: 0.5em;
+}
+
+.dialog button {
+	min-width: 5em;
+}
+
+.waiting:before {
+	content: "■ ";
+	color: gold;
+}
+.started:before {
+	content: "■ ";
+	color: lawngreen;
+}
+.cancelled:before {
+	content: "■ ";
+	color: red;
+}
+.finished:before {
+	content: "■ ";
+	color: gray;
+}
+
+
+
+.w-tabs-head {
+	display: inline-block;
+	border: thin solid #777;
+	padding: 0.2em 0.5em;
+	cursor: pointer;
+	border-radius: 0 9px 0 0;
+}
+
+.w-tab-head.current {
+	padding: 0.2em 0.5em;
+	background: #666;
+	color: white;
+}
+
+.w-tabs-body h1 {
+	display: none;
+}
+
+
+.accordion-section {
+	border: thin solid #999;
+	margin-bottom: 1em;
+}
+
+.accordion-section table {
+	margin: 0;
+	border: none;
+	width: 100%;
+}
+
+.accordion-header {
+	font-size: 1em;
+	cursor: pointer;
+	padding: 0.5em;
+	margin: 0;
+	background-color: #f6f6f6;
+	font-weight: normal;
+}
+.accordion-header:before {
+	display: inline-block;
+	width: 1em;
+	content: "\25BA ";
+	margin-right: 0.5em;
+	font-size: smaller;
+}
+.accordion-header.accordion-open:before {
+	content: "\25BC ";
+	margin-right: 0.5em;
+}
+.accordion-container {
+	margin: 0;
+}
+
+
+#login-form {
+	background-color: white;
+	padding: 1.5em;
+	border-radius: 4px;
+	display: inline-block;
+	text-align: left;
+}

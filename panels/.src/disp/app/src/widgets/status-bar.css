@@ -1,0 +1,45 @@
+#status-bar {
+	height: 2em;
+	position: fixed;
+	left: 180px;
+	top: 0px;
+	right: 8px;
+}
+
+#status-bar > div {
+	display: inline-block;
+}
+
+#status-bar .indicators > span {
+	display: inline-block;
+	padding: 0.5em 1em;
+}
+
+#status-bar .indicators > span.hidden {
+	display: none;
+}
+
+#status-bar .no-sound {
+	background: url("images/mute.svg") no-repeat;
+	background-position: 0 50%;
+	background-size: 1.5em;
+	padding-left: 1.7em;
+}
+
+#status-bar .no-ping {
+	background-color: #f66;
+	color: white;
+}
+
+#status-bar .buttons {
+	float: right;
+}
+
+#status-bar .buttons .settings {
+	background-image: url("images/settings.svg");
+	background-repeat: no-repeat;
+	background-size: 16px 16px;
+	background-position: 4px center;
+	text-indent: 14px;
+	font-size: 11px;
+}

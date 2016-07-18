@@ -1,0 +1,73 @@
+body > header {
+	margin-top: 2em;
+}
+
+header nav > ul {
+	display: none;
+}
+
+header nav:hover > ul {
+	display: block;
+}
+
+body > header nav {
+	width: 12em;
+	left: 0;
+	margin-top: 0;
+	position: fixed;
+	top: 0;
+	z-index: 1001; /* Leaflet's zoom control has 1000. */
+}
+
+body > header nav {
+	border-bottom: solid 1px #bbb;
+}
+
+body > header nav h1 {
+	font-size: 0.8em;
+	margin: 0;
+	padding: .5em .7em;
+	background-color: #9ac;
+}
+
+body > header nav ul
+{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+body > header nav ul li{
+	position: relative;
+}
+
+body > header nav ul ul {
+	position: absolute;
+	left: 100%;
+	top: 0;
+	visibility: hidden;
+}
+
+body > header nav ul, body > header nav h1 {
+	box-shadow: .1em .2em .3em #999;
+}
+
+body > header nav li:hover ul {
+	visibility: visible;
+}
+
+body > header nav a {
+	display: block;
+	border: solid 1px #bbb;
+	border-bottom-width: 0;
+	padding: .7em;
+	text-decoration: none;
+	background-color: #f6f6f6;
+	color: #222;
+	background-repeat: no-repeat;
+	min-width: 7em;
+}
+
+body > header nav a:hover {
+	background-color: white;
+}

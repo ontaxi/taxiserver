@@ -1,0 +1,11 @@
+name=order
+src="lib src"
+
+jscat -d $src > out/$name.js
+find $src -name "*.css" | xargs cat > tmp.css
+php tmp.css > out/$name.css
+rm tmp.css
+
+cp out/$name.css ../../site/res/dispatcher-loc/order.css
+cp out/$name.js ../../site/res/dispatcher-loc/order.js
+rsync -r -i -v -u --delete-after src/images ../../site/res/dispatcher-loc/

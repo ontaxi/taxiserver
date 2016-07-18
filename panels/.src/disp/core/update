@@ -1,0 +1,6 @@
+name=disp-core
+src="lib src"
+
+jscat $src > $name.js
+cp $name.js ../app/lib/disp-core.js
+cp $name.js ../app/lib/disp-core.js
